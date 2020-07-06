@@ -114,7 +114,7 @@ int main(){
 	tamX = 1000;
 	tamY = 600;
 	
-	initwindow(tamX,tamY,"Click Tuning",50,50);
+	initwindow(tamX, tamY, "Click Tuning", 50, 50);
 	
 	char tecla;
 	
@@ -128,7 +128,7 @@ int main(){
 	
 	fase1.pos = 0;
 	
-	readimagefile("FundoTutorialeFase1.bmp",0,0,1000,600);
+	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000, 600);
 	getimage(0, 0, 1000, 600, R);
 	cleardevice();
 	while(tecla != CR) {
