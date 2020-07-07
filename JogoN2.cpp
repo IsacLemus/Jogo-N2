@@ -7,94 +7,116 @@
 
 #define CR	13
 
-struct fase{
-	long long int pos, comprimento;
+struct Fase{
+	int pos, comprimento;
 };
 
 struct carro1{
-	long long int pos, velocidade, aceleracao, velocidadeMax;
+	int pos, posX, velocidade, aceleracao, velocidadeMax;
 };
 
 struct carromaquina{
-	long long int pos, velocidade, aceleracao, velocidadeMax;
+	int pos, posX, velocidade, aceleracao, velocidadeMax;
 };
 
-carro1 jogador;
-fase fase1;
-carromaquina oponente;
-int velocidade, tamX, tamY, FPS, tam, gold;
-int FaseAtual, LimiteFase;
-void *R;
-int pg = 1;
-unsigned long long gt1, gt2;
-bool result;
-
-
-bool fase(int comprimento){
+bool fase(int comprimento, carro1 jogador, carromaquina oponente, Fase fase1, void *R[], int tamX, int tamY){
 	bool resultado;
+	
+	int pg = 1;
+	unsigned long long gt1, gt2;
+	int FPS = 60;
 	
 	jogador.pos = fase1.pos;
 	jogador.aceleracao = 5;
-	oponente.aceleracao = 0;
+	oponente.aceleracao = 1;
 	oponente.pos =0;
 	oponente.velocidade = 0;
 	
-	while (jogador.pos <= comprimento){
-		
-		printf("Funcao fase\n");
-		/*gt2 = GetTickCount();
-		gt1 = gt2;
-		if (gt2 - gt1 > 1000/FPS){
-			gt2 = gt1;*/
+	gt1 = GetTickCount();
+	
+	while (jogador.posX < 890)
+	{
+		gt2 = GetTickCount();
+		if (gt2 - gt1 > 1000/FPS)
+		{
+			gt1 = gt2;
 			
 			if(pg == 1) pg = 2; else pg = 1;
 			setactivepage(pg);
-			gt1 = GetTickCount();
 			setbkcolor(RGB(0,0,0));
 			cleardevice();
-		
+					
+			//Desenhar a fase
+			putimage(fase1.pos, 0, R[0], COPY_PUT);
+			putimage(fase1.pos+tamX, 0, R[0], COPY_PUT);
+			putimage(fase1.pos+(tamX*2), 0, R[1], COPY_PUT);
+			
+			setfillstyle(1,RGB(0,255,0));
+			bar(jogador.posX,520,jogador.posX+100,570);
+			setfillstyle(1,RGB(255,0,0));
+			bar(oponente.posX,400,oponente.posX+100,450);
+			
+			//Deixa a pagina visivel
+			setvisualpage(pg);
+			
 			//Movimentação do jogador
 			//jogador.velocidade = 0;
-			if(jogador.velocidadeMax >= jogador.velocidade){
 			
-				if(GetAsyncKeyState(VK_RIGHT)&0x0080) {
-					jogador.velocidade += jogador.aceleracao;
-					printf("suhaush");
+			if(GetKeyState(VK_RIGHT)&0x80)
+			{
+				jogador.velocidade += jogador.aceleracao;
+				if(jogador.velocidade > jogador.velocidadeMax)
+				{
+					jogador.velocidade = jogador.velocidadeMax;
 				}
-			      	
-			    else if(GetAsyncKeyState(VK_SPACE)&0x0080)
-			      	jogador.velocidade += jogador.aceleracao*5;
-			    else if(GetAsyncKeyState(VK_LEFT)&0x0080)
-			      	jogador.velocidade -= jogador.aceleracao*5;
+			}
+			else if(GetKeyState(VK_LEFT)&0x80)
+			{
+				jogador.velocidade -= jogador.aceleracao*5;
+				if(jogador.velocidade < 0)
+				{
+					jogador.velocidade = 0;
+				}
+			}
+			else if(GetKeyState(VK_SPACE)&0x80)
+			{
+				jogador.velocidade += jogador.aceleracao*5;
 			}
 
-		      	
-		    jogador.pos += jogador.velocidade;
-			fase1.pos -= jogador.velocidade;
-			
-			if(oponente.velocidade <= oponente.velocidadeMax){
+		    if(oponente.velocidade <= oponente.velocidadeMax){
 				oponente.velocidade += oponente.aceleracao;
 			}
 			oponente.pos += oponente.velocidade;
-			printf("%d", oponente.pos);
-					
-			//Desenhar a fase
-			putimage(fase1.pos, 0, R, COPY_PUT);
-			putimage(fase1.pos-tamX, 0, R, COPY_PUT);
-			putimage(fase1.pos+tamX, 0, R, COPY_PUT);
-			if(fase1.pos <= -tamX || fase1.pos >= tamX ){
-				fase1.pos = 0;	
+			oponente.posX += oponente.velocidade;
+		    
+		    jogador.pos += jogador.velocidade;
+			
+			if((jogador.posX > tamX / 3) && (fase1.pos > -2000))
+			{
+				fase1.pos -= jogador.velocidade;
+				oponente.posX -= jogador.velocidade;
+				if((fase1.pos < -(tamX)) && ((comprimento - jogador.pos) > 2000))
+				{
+					fase1.pos += tamX;
+				}
+				printf("\n Fase PosX = %d", fase1.pos);
+				
+				if(fase1.pos < -2000)
+				{
+					fase1.pos = -2000;
+				}
 			}
-			
-			setfillstyle(1,RGB(0,255,0));
-			bar(jogador.pos+50,520,jogador.pos+100,570);
-			setfillstyle(1,RGB(255,0,0));
-			bar(oponente.pos+50,400,oponente.pos+100,450);
-			setvisualpage(pg);
-			do{
-				gt2 = GetTickCount(); 
-			}while(gt2 - gt1 > 1000/FPS);
-			
+			else
+			{
+				jogador.posX += jogador.velocidade;
+			}
+			/*
+			printf("\n\nJogador PosX: %d", jogador.pos);
+			printf("\nJogador Vel: %d", jogador.velocidade);
+			printf("\nOponente PosX: %d", oponente.pos);
+			printf("\nOponente Vel: %d", oponente.velocidade);
+			*/
+		}
 	}
 	if (jogador.pos >= comprimento && oponente.pos < comprimento){ //Ganhou
 		resultado = true;
@@ -109,12 +131,24 @@ bool fase(int comprimento){
 
 int main(){
 	
-	jogador.pos = 0;
-	fase1.comprimento = 15000;
+	carro1 jogador;
+	carromaquina oponente;
+	Fase fase1;
+	
+	int velocidade, tamX, tamY, FPS, tam, gold;
+	int FaseAtual, LimiteFase;
+	void *R[2];
+	int pg = 1;
+	unsigned long long gt1, gt2;
+	bool result;
+	
 	tamX = 1000;
 	tamY = 600;
 	
 	initwindow(tamX, tamY, "Click Tuning", 50, 50);
+	
+	jogador.pos = 0;
+	fase1.comprimento = 15000;
 	
 	char tecla;
 	
@@ -124,20 +158,27 @@ int main(){
 	velocidade = 0;
 	FPS = 60;
 	tam = imagesize(0,0,1000,600);
-	R = malloc(tam);
+	R[0] = malloc(tam);
+	R[1] = malloc(tam);
 	
 	fase1.pos = 0;
 	
 	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000, 600);
-	getimage(0, 0, 1000, 600, R);
+	getimage(0, 0, 1000, 600, R[0]);
+	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000, 600);
+	getimage(0, 0, 1000, 600, R[1]);
 	cleardevice();
 	while(tecla != CR) {
 		printf("Entrei\n");
 		if(FaseAtual == 0){
 			oponente.velocidadeMax = 10;
+			oponente.velocidade = 0;
+			jogador.velocidade = 0;
 			jogador.velocidadeMax = 100;
+			jogador.posX = 0;
+			oponente.posX = 0;
 			printf("Aqui\n");
-			result = fase(1500000);
+			result = fase(15000, jogador, oponente, fase1, R, tamX, tamY);
 			if (result){
 				FaseAtual = 1;
 				gold += 100;
@@ -147,11 +188,12 @@ int main(){
 				gold += 50;
 			}	
 		}
-			
+		
+		/*	
 		if(FaseAtual == 1){
 			oponente.velocidadeMax = 50;
 			jogador.velocidadeMax = 100;
-			result = fase(10000);
+			//result = fase(10000);
 			if (result){
 				FaseAtual = 2;
 				gold += 100;
@@ -165,7 +207,7 @@ int main(){
 		if(FaseAtual == 2){
 			oponente.velocidadeMax = 75;
 			jogador.velocidadeMax = 100;
-			result = fase(15000);
+			//result = fase(15000);
 			if (result){
 				FaseAtual = 3;
 				gold += 100;
@@ -188,6 +230,7 @@ int main(){
 				gold += 50;
 			}	
 		}
+		*/
 			
 		printf("%d\n", jogador.pos);
 				
