@@ -5,6 +5,14 @@
 #include<graphics.h>
 #include <time.h>
 
+#define LEFT   	75
+#define RIGHT  	77
+#define UP     	72
+#define DOWN   	80
+#define ESC     27
+
+#define TECLAENTER		13
+#define TECLABACKSPACE	8
 #define CR	13
 
 enum NomeDosMenus {MENUPRINCIPAL, CUSTOMIZACAOCARRO};
@@ -166,7 +174,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 int main()
 {	
 	//Imagens
-	void *R[2]; // Teste
+	void *R[3]; // Teste
 	
 	//Variaveis do jogo
 	int gold = 0,
@@ -215,9 +223,13 @@ int main()
 		tamX = 1000,
 		tamY = 600,
 		FPS = 60,
-		tamImagem = 0;
+		tamImagem = 0,
+		i = 0,
+		Selecao = 0;
 	
-	char tecla = 0;
+	char tecla = 0,
+		 Texto[50],
+		 Texto2[50];
 	unsigned long long gt1, gt2;
 	
 	//Variaveis dos menus
@@ -225,8 +237,12 @@ int main()
 		menuAtual2 = 0;
 	bool result = false;
 	
+	int Menu1PosX = 60,
+		Menu1PosY = 190,
+		Menu1PosYD = 45;
+	
 	//Ponteiros --------------------------------------------------------------------
-	int ListaMotoresTamanho = 1,
+	int ListaMotoresTamanho = 3,
 		*ListaMotores = NULL;
 	
 	int ListaTurbosTamanho = 1,
@@ -248,7 +264,10 @@ int main()
 		*ListaPneus = NULL;
 	
 	ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
-	ListaMotores[ListaMotoresTamanho - 1] = MOTOR1;
+	//ListaMotores[ListaMotoresTamanho - 1] = MOTOR1;
+	ListaMotores[0] = MOTOR1;
+	ListaMotores[1] = MOTOR2;
+	ListaMotores[2] = MOTOR3;
 	
 	ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
 	ListaTurbos[ListaTurbosTamanho - 1] = TURBO1;
@@ -274,15 +293,15 @@ int main()
 	//Motores
 	StructPecas Motor[3];
 	
-	strcpy(Motor[MOTOR1].Nome, "1.8 AP Turbo 4 Cilindros");
+	strcpy(Motor[MOTOR1].Nome, "1.8 - AP Turbo 4 Cilindros");
 	Motor[MOTOR1].Valor = 1;
 	Motor[MOTOR1].Preco = 0;
 	
-	strcpy(Motor[MOTOR2].Nome, "2.0 4 Cilindros Forjado");
+	strcpy(Motor[MOTOR2].Nome, "2.0 - 4 Cilindros Forjado");
 	Motor[MOTOR2].Valor = 3;
 	Motor[MOTOR2].Preco = 100;
 	
-	strcpy(Motor[MOTOR3].Nome, "3.0 6 Cilindros em Linha 2JZ");
+	strcpy(Motor[MOTOR3].Nome, "3.0 - 6 Cilindros em Linha 2JZ");
 	Motor[MOTOR3].Valor = 5;
 	Motor[MOTOR3].Preco = 300;
 	
@@ -380,14 +399,17 @@ int main()
 	//Iniciar a janela do jogo ----------------------------------------------------------------------------------------------
 	initwindow(tamX, tamY, "Click Tuning", 50, 50);
 	
-	tamImagem = imagesize(0,0,1000,600);
+	tamImagem = imagesize(0, 0, 1000 - 1, 600 - 1);
 	R[0] = malloc(tamImagem);
 	R[1] = malloc(tamImagem);
+	R[2] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
 	
-	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000, 600);
-	getimage(0, 0, 1000, 600, R[0]);
-	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000, 600);
-	getimage(0, 0, 1000, 600, R[1]);
+	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
+	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[1]);
+	readimagefile("Sprites/menuCustomizacao1.bmp", 0, 0, 335 - 1, 45 - 1);
+	getimage(0, 0, 335 - 1, 45 - 1, R[2]);
 	
 	menuAtual = MENUPRINCIPAL;
 	menuAtual = CUSTOMIZACAOCARRO;
@@ -408,14 +430,107 @@ int main()
 				if(pg == 1) pg = 2; else pg = 1;
 				
 				setactivepage(pg);
-				setbkcolor(RGB(0,0,0));
+				setbkcolor(RGB(230, 230, 230));
 				cleardevice();
 				
 				//Desenhos
 				
+				if(menuAtual2 == MENUMOTOR)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaMotoresTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Motor[ListaMotores[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
+				if(menuAtual2 == MENUTURBO)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaTurbosTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Turbo[ListaTurbos[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
 				//Deixa a pagina visivel
 				setvisualpage(pg);
 				
+				//Acoes
+				if(tecla == RIGHT)
+				{
+					menuAtual2 ++;
+					Selecao = 0;
+					if(menuAtual2 > 6)
+					{
+						menuAtual2 = 0;
+					}
+				}
+				if(tecla == LEFT)
+				{
+					menuAtual2 --;
+					Selecao = 0;
+					if(menuAtual2 < 0)
+					{
+						menuAtual2 = 6;
+					}
+				}
+				
+				if(menuAtual2 == MENUMOTOR)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaMotoresTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						jogador.motor = Motor[ListaMotores[Selecao]].Valor;
+						printf("\nMotor: %d", jogador.motor);
+					}
+				}
+				
+				if(menuAtual2 == MENUTURBO)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
+						printf("\nTurbo: %d", jogador.turbo);
+					}
+				}
+				
+				/*
 				if(FaseAtual == 0)
 				{
 					oponente.velocidadeMax = 10;
@@ -434,16 +549,26 @@ int main()
 						gold += 50;
 					}
 				}
-					
-				setvisualpage(pg);
+				*/
 				
 				tecla = 0;
 				fflush(stdin);
 				if (kbhit())
+				{
 					tecla = getch ();
+				}
 			}
 		}
 	}
+	
+	free(ListaMotores);
+	free(ListaTurbos);
+	free(ListaRedPesos);
+	free(ListaInjecoes);
+	free(ListaSuspensores);
+	free(ListaNitros);
+	free(ListaPneus);
+	
 	closegraph();
 	return (0);
 	
