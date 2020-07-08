@@ -60,6 +60,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 	int pg = 1;
 	unsigned long long gt1, gt2;
 	int FPS = 60;
+	char tecla = 0;
 	
 	jogador.pos = Fase.pos;
 	jogador.aceleracao = 5;
@@ -137,7 +138,6 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 				{
 					Fase.pos += tamX;
 				}
-				printf("\n Fase PosX = %d", Fase.pos);
 				
 				if(Fase.pos < -2000)
 				{
@@ -154,8 +154,16 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 			printf("\nOponente PosX: %d", oponente.pos);
 			printf("\nOponente Vel: %d", oponente.velocidade);
 			*/
+			
+			tecla = 0;
+			fflush(stdin);
+			if (kbhit())
+			{
+				tecla = getch ();
+			}
 		}
 	}
+	
 	if (jogador.pos > oponente.pos)
 	{ //Ganhou
 		resultado = true;
@@ -165,7 +173,6 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 		resultado = false;
 	}
 
-	
 	return(resultado);
 }
 
