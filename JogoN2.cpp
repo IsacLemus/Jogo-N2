@@ -528,7 +528,7 @@ int main()
 					}
 				}
 				
-				/*
+				//Corrida (Beta)
 				if(FaseAtual == 0)
 				{
 					oponente.velocidadeMax = 10;
@@ -547,7 +547,6 @@ int main()
 						gold += 50;
 					}
 				}
-				*/
 				
 				tecla = 0;
 				fflush(stdin);
