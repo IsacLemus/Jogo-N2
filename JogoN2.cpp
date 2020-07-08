@@ -1,105 +1,167 @@
- //JOGNA2 - GRUPO 6
-
 #include<stdio.h>
 #include<iostream>
 #include<graphics.h>
 #include <time.h>
 
+#define LEFT   	75
+#define RIGHT  	77
+#define UP     	72
+#define DOWN   	80
+#define ESC     27
+
+#define TECLAENTER		13
+#define TECLABACKSPACE	8
 #define CR	13
 
-struct fase{
-	long long int pos, comprimento;
+enum NomeDosMenus {MENUPRINCIPAL, CUSTOMIZACAOCARRO};
+enum NomeDosMenusCustomizacao {MENUMOTOR, MENUTURBO, MENUREDPESO, MENUINJECAO, MENUSUSPENSAO, MENUNITRO, MENUPNEU};
+
+enum Motores {MOTOR1, MOTOR2, MOTOR3};
+enum Turbos {TURBO1, TURBO2, TURBO3};
+enum RedPeso {REDP1, REDP2, REDP3};
+enum Injecao {INJECAO1, INJECAO2, INJECAO3};
+enum Suspencao {SUSPENSAO1, SUSPENSAO2, SUSPENSAO3};
+enum Nitro {NITRO1, NITRO2, NITRO3};
+enum Pneu {PNEU1, PNEU2, PNEU3};
+
+struct StructFase
+{
+	int pos,
+		comprimento;
 };
 
-struct carro1{
-	long long int pos, velocidade, aceleracao, velocidadeMax;
+struct StructCarro
+{
+	int pos,
+		posX,
+		velocidade,
+		aceleracao,
+		velocidadeMax;
+	
+	int motor,
+		turbo,
+		reducaoPeso,
+		injecao,
+		suspensao,
+		nitro,
+		pneu;
 };
 
-struct carromaquina{
-	long long int pos, velocidade, aceleracao, velocidadeMax;
+struct StructPecas
+{
+	char Nome[50];
+	int Valor,
+		Preco;
 };
 
-carro1 jogador;
-fase fase1;
-carromaquina oponente;
-int velocidade, tamX, tamY, FPS, tam, gold;
-int FaseAtual, LimiteFase;
-void *R;
-int pg = 1;
-unsigned long long gt1, gt2;
-bool result;
-
-
-bool fase(int comprimento){
+bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, void *R[], int tamX, int tamY){
 	bool resultado;
 	
-	jogador.pos = fase1.pos;
+	int pg = 1;
+	unsigned long long gt1, gt2;
+	int FPS = 60;
+	
+	jogador.pos = Fase.pos;
 	jogador.aceleracao = 5;
-	oponente.aceleracao = 0;
+	oponente.aceleracao = 1;
 	oponente.pos =0;
 	oponente.velocidade = 0;
 	
-	while (jogador.pos <= comprimento){
-		
-		printf("Funcao fase\n");
-		/*gt2 = GetTickCount();
-		gt1 = gt2;
-		if (gt2 - gt1 > 1000/FPS){
-			gt2 = gt1;*/
+	gt1 = GetTickCount();
+	
+	while (jogador.posX < 890)
+	{
+		gt2 = GetTickCount();
+		if (gt2 - gt1 > 1000/FPS)
+		{
+			gt1 = gt2;
 			
 			if(pg == 1) pg = 2; else pg = 1;
 			setactivepage(pg);
-			gt1 = GetTickCount();
 			setbkcolor(RGB(0,0,0));
 			cleardevice();
-		
-			//Movimenta��o do jogador
-			//jogador.velocidade = 0;
-			if(jogador.velocidadeMax >= jogador.velocidade){
-			
-				if(GetAsyncKeyState(VK_RIGHT)&0x0080) {
-					jogador.velocidade += jogador.aceleracao;
-					printf("suhaush");
-				}
-			      	
-			    else if(GetAsyncKeyState(VK_SPACE)&0x0080)
-			      	jogador.velocidade += jogador.aceleracao*5;
-			    else if(GetAsyncKeyState(VK_LEFT)&0x0080)
-			      	jogador.velocidade -= jogador.aceleracao*5;
-			}
-
-		      	
-		    jogador.pos += jogador.velocidade;
-			fase1.pos -= jogador.velocidade;
-			
-			if(oponente.velocidade <= oponente.velocidadeMax){
-				oponente.velocidade += oponente.aceleracao;
-			}
-			oponente.pos += oponente.velocidade;
-			printf("%d", oponente.pos);
 					
 			//Desenhar a fase
-			putimage(fase1.pos, 0, R, COPY_PUT);
-			putimage(fase1.pos-tamX, 0, R, COPY_PUT);
-			putimage(fase1.pos+tamX, 0, R, COPY_PUT);
-			if(fase1.pos <= -tamX || fase1.pos >= tamX ){
-				fase1.pos = 0;	
-			}
+			putimage(Fase.pos, 0, R[0], COPY_PUT);
+			putimage(Fase.pos+tamX, 0, R[0], COPY_PUT);
+			putimage(Fase.pos+(tamX*2), 0, R[1], COPY_PUT);
 			
 			setfillstyle(1,RGB(0,255,0));
-			bar(jogador.pos+50,520,jogador.pos+100,570);
+			bar(jogador.posX,520,jogador.posX+100,570);
 			setfillstyle(1,RGB(255,0,0));
-			bar(oponente.pos+50,400,oponente.pos+100,450);
-			setvisualpage(pg);
-			do{
-				gt2 = GetTickCount(); 
-			}while(gt2 - gt1 > 1000/FPS);
+			bar(oponente.posX,400,oponente.posX+100,450);
 			
+			//Deixa a pagina visivel
+			setvisualpage(pg);
+			
+			//Movimenta��o do jogador
+			//jogador.velocidade = 0;
+			
+			if(GetKeyState(VK_RIGHT)&0x80)
+			{
+				jogador.velocidade += jogador.aceleracao;
+				if(jogador.velocidade > jogador.velocidadeMax)
+				{
+					jogador.velocidade = jogador.velocidadeMax;
+				}
+			}
+			else if(GetKeyState(VK_LEFT)&0x80)
+			{
+				jogador.velocidade -= jogador.aceleracao*5;
+				if(jogador.velocidade < 0)
+				{
+					jogador.velocidade = 0;
+				}
+			}
+			else if(GetKeyState(VK_SPACE)&0x80)
+			{
+				jogador.velocidade += jogador.aceleracao*5;
+			}
+
+		    if(oponente.velocidade <= oponente.velocidadeMax){
+				oponente.velocidade += oponente.aceleracao;
+			}
+			if(oponente.pos < Fase.comprimento + 2000)
+			{
+				oponente.pos += oponente.velocidade;
+				oponente.posX += oponente.velocidade;
+			}
+		    
+		    jogador.pos += jogador.velocidade;
+			
+			if((jogador.posX > tamX / 3) && (Fase.pos > -2000))
+			{
+				Fase.pos -= jogador.velocidade;
+				oponente.posX -= jogador.velocidade;
+				if((Fase.pos < -(tamX)) && ((Fase.comprimento - jogador.pos) > 2000))
+				{
+					Fase.pos += tamX;
+				}
+				printf("\n Fase PosX = %d", Fase.pos);
+				
+				if(Fase.pos < -2000)
+				{
+					Fase.pos = -2000;
+				}
+			}
+			else
+			{
+				jogador.posX += jogador.velocidade;
+			}
+			/*
+			printf("\n\nJogador PosX: %d", jogador.pos);
+			printf("\nJogador Vel: %d", jogador.velocidade);
+			printf("\nOponente PosX: %d", oponente.pos);
+			printf("\nOponente Vel: %d", oponente.velocidade);
+			*/
+		}
 	}
-	if (jogador.pos >= comprimento && oponente.pos < comprimento){ //Ganhou
+	if (jogador.pos > oponente.pos)
+	{ //Ganhou
 		resultado = true;
 	}
-	else if ((jogador.pos < comprimento && oponente.pos >= comprimento) || (jogador.pos = comprimento && oponente.pos >= comprimento )){ //Perdeu
+	else
+	{ //Perdeu
 		resultado = false;
 	}
 
@@ -107,27 +169,25 @@ bool fase(int comprimento){
 	return(resultado);
 }
 
-<<<<<<< HEAD
-int main(){
-=======
 int main()
 {	
 	//Imagens
-	void *R[2]; // Teste
+	void *R[3]; // Teste
 	
 	//Variaveis do jogo
 	int gold = 0,
 		FaseAtual = 0;
->>>>>>> 3e751f23ac57e7d98b0cb8f73d6995e4f3e578cc
 	
+	StructCarro jogador,
+		  		oponente;
+		  
+	StructFase Fase;
+	
+	Fase.pos = 0,
+	Fase.comprimento = 15000;
+	
+	//Jogador
 	jogador.pos = 0;
-<<<<<<< HEAD
-	fase1.comprimento = 15000;
-	tamX = 1000;
-	tamY = 600;
-	
-	initwindow(tamX, tamY, "Click Tuning", 50, 50);
-=======
 	jogador.posX = 0;
 	jogador.aceleracao = 0;
 	jogador.velocidade = 0;
@@ -161,9 +221,13 @@ int main()
 		tamX = 1000,
 		tamY = 600,
 		FPS = 60,
-		tamImagem = 0;
+		tamImagem = 0,
+		i = 0,
+		Selecao = 0;
 	
-	char tecla = 0;
+	char tecla = 0,
+		 Texto[50],
+		 Texto2[50];
 	unsigned long long gt1, gt2;
 	
 	//Variaveis dos menus
@@ -171,8 +235,12 @@ int main()
 		menuAtual2 = 0;
 	bool result = false;
 	
+	int Menu1PosX = 60,
+		Menu1PosY = 190,
+		Menu1PosYD = 45;
+	
 	//Ponteiros --------------------------------------------------------------------
-	int ListaMotoresTamanho = 1,
+	int ListaMotoresTamanho = 3,
 		*ListaMotores = NULL;
 	
 	int ListaTurbosTamanho = 1,
@@ -194,7 +262,10 @@ int main()
 		*ListaPneus = NULL;
 	
 	ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
-	ListaMotores[ListaMotoresTamanho - 1] = MOTOR1;
+	//ListaMotores[ListaMotoresTamanho - 1] = MOTOR1;
+	ListaMotores[0] = MOTOR1;
+	ListaMotores[1] = MOTOR2;
+	ListaMotores[2] = MOTOR3;
 	
 	ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
 	ListaTurbos[ListaTurbosTamanho - 1] = TURBO1;
@@ -220,15 +291,15 @@ int main()
 	//Motores
 	StructPecas Motor[3];
 	
-	strcpy(Motor[MOTOR1].Nome, "1.8 AP Turbo 4 Cilindros");
+	strcpy(Motor[MOTOR1].Nome, "1.8 - AP Turbo 4 Cilindros");
 	Motor[MOTOR1].Valor = 1;
 	Motor[MOTOR1].Preco = 0;
 	
-	strcpy(Motor[MOTOR2].Nome, "2.0 4 Cilindros Forjado");
+	strcpy(Motor[MOTOR2].Nome, "2.0 - 4 Cilindros Forjado");
 	Motor[MOTOR2].Valor = 3;
 	Motor[MOTOR2].Preco = 100;
 	
-	strcpy(Motor[MOTOR3].Nome, "3.0 6 Cilindros em Linha 2JZ");
+	strcpy(Motor[MOTOR3].Nome, "3.0 - 6 Cilindros em Linha 2JZ");
 	Motor[MOTOR3].Valor = 5;
 	Motor[MOTOR3].Preco = 300;
 	
@@ -321,96 +392,22 @@ int main()
 	strcpy(Pneu[PNEU3].Nome, "Pneus Profissionais");
 	Pneu[PNEU3].Valor = 5;
 	Pneu[PNEU3].Preco = 100;
-<<<<<<< HEAD
->>>>>>> 3e751f23ac57e7d98b0cb8f73d6995e4f3e578cc
-	
-	char tecla;
-	
-	FaseAtual = 0;
-	gold = 0;
-	tecla = 0;
-	velocidade = 0;
-	FPS = 60;
-	tam = imagesize(0,0,1000,600);
-	R = malloc(tam);
-	
-<<<<<<< HEAD
-	fase1.pos = 0;
-	
-	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000, 600);
-	getimage(0, 0, 1000, 600, R);
-	cleardevice();
-	while(tecla != CR) {
-		printf("Entrei\n");
-		if(FaseAtual == 0){
-			oponente.velocidadeMax = 10;
-			jogador.velocidadeMax = 100;
-			printf("Aqui\n");
-			result = fase(1500000);
-			if (result){
-				FaseAtual = 1;
-				gold += 100;
-			}
-			else {
-				FaseAtual = 0;
-				gold += 50;
-			}	
-		}
-			
-		if(FaseAtual == 1){
-			oponente.velocidadeMax = 50;
-			jogador.velocidadeMax = 100;
-			result = fase(10000);
-			if (result){
-				FaseAtual = 2;
-				gold += 100;
-			}
-			else {
-				FaseAtual = 1;
-				gold += 50;
-			}	
-		}
-			
-		if(FaseAtual == 2){
-			oponente.velocidadeMax = 75;
-			jogador.velocidadeMax = 100;
-			result = fase(15000);
-			if (result){
-				FaseAtual = 3;
-				gold += 100;
-			}
-			else {
-				FaseAtual = 2;
-				gold += 50;
-			}	
-		}
-			
-		if(FaseAtual == 3){
-			oponente.velocidadeMax = 95;
-			jogador.velocidadeMax = 100;
-			if (fase(15000)){
-				FaseAtual = 4;
-				gold += 400;
-=======
-	tamImagem = imagesize(0, 0, 1000 - 1, 600 - 1);
-=======
 	
 	
 	//Iniciar a janela do jogo ----------------------------------------------------------------------------------------------
 	initwindow(tamX, tamY, "Click Tuning", 50, 50);
 	
-	tamImagem = imagesize(0,0,1000,600);
-<<<<<<< HEAD
->>>>>>> parent of 3e751f2... Menu de customização
-=======
->>>>>>> parent of 3e751f2... Menu de customização
+	tamImagem = imagesize(0, 0, 1000 - 1, 600 - 1);
 	R[0] = malloc(tamImagem);
 	R[1] = malloc(tamImagem);
+	R[2] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
 	
-	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000, 600);
-	getimage(0, 0, 1000, 600, R[0]);
-	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000, 600);
-	getimage(0, 0, 1000, 600, R[1]);
+	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
+	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[1]);
+	readimagefile("Sprites/menuCustomizacao1.bmp", 0, 0, 335 - 1, 45 - 1);
+	getimage(0, 0, 335 - 1, 45 - 1, R[2]);
 	
 	menuAtual = MENUPRINCIPAL;
 	menuAtual = CUSTOMIZACAOCARRO;
@@ -431,14 +428,107 @@ int main()
 				if(pg == 1) pg = 2; else pg = 1;
 				
 				setactivepage(pg);
-				setbkcolor(RGB(0,0,0));
+				setbkcolor(RGB(230, 230, 230));
 				cleardevice();
 				
 				//Desenhos
 				
+				if(menuAtual2 == MENUMOTOR)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaMotoresTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Motor[ListaMotores[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
+				if(menuAtual2 == MENUTURBO)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaTurbosTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Turbo[ListaTurbos[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
 				//Deixa a pagina visivel
 				setvisualpage(pg);
 				
+				//Acoes
+				if(tecla == RIGHT)
+				{
+					menuAtual2 ++;
+					Selecao = 0;
+					if(menuAtual2 > 6)
+					{
+						menuAtual2 = 0;
+					}
+				}
+				if(tecla == LEFT)
+				{
+					menuAtual2 --;
+					Selecao = 0;
+					if(menuAtual2 < 0)
+					{
+						menuAtual2 = 6;
+					}
+				}
+				
+				if(menuAtual2 == MENUMOTOR)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaMotoresTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						jogador.motor = Motor[ListaMotores[Selecao]].Valor;
+						printf("\nMotor: %d", jogador.motor);
+					}
+				}
+				
+				if(menuAtual2 == MENUTURBO)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
+						printf("\nTurbo: %d", jogador.turbo);
+					}
+				}
+				
+				/*
 				if(FaseAtual == 0)
 				{
 					oponente.velocidadeMax = 10;
@@ -457,46 +547,26 @@ int main()
 						gold += 50;
 					}
 				}
-					
-				setvisualpage(pg);
+				*/
 				
 				tecla = 0;
 				fflush(stdin);
 				if (kbhit())
+				{
 					tecla = getch ();
-<<<<<<< HEAD
-<<<<<<< HEAD
 				}
->>>>>>> 3e751f23ac57e7d98b0cb8f73d6995e4f3e578cc
-=======
->>>>>>> parent of 3e751f2... Menu de customização
-=======
->>>>>>> parent of 3e751f2... Menu de customização
 			}
-			else {
-				FaseAtual = 3;
-				gold += 50;
-			}	
 		}
-<<<<<<< HEAD
-			
-		printf("%d\n", jogador.pos);
-				
-		/*if(jogador.pos > fase1.comprimento){
-			printf("Voce ganhou\n");
-		}*/
-			
-		//delay(50);
-			
-		setvisualpage(pg);
-			
-		fflush(stdin);
-		if (kbhit())
-			tecla = getch ();
-	
-=======
->>>>>>> parent of 3e751f2... Menu de customização
 	}
+	
+	free(ListaMotores);
+	free(ListaTurbos);
+	free(ListaRedPesos);
+	free(ListaInjecoes);
+	free(ListaSuspensores);
+	free(ListaNitros);
+	free(ListaPneus);
+	
 	closegraph();
 	return (0);
 	
