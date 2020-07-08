@@ -400,6 +400,9 @@ int main()
 	initwindow(tamX, tamY, "Click Tuning", 50, 50);
 	
 	tamImagem = imagesize(0,0,1000,600);
+<<<<<<< HEAD
+>>>>>>> parent of 3e751f2... Menu de customização
+=======
 >>>>>>> parent of 3e751f2... Menu de customização
 	R[0] = malloc(tamImagem);
 	R[1] = malloc(tamImagem);
@@ -462,8 +465,11 @@ int main()
 				if (kbhit())
 					tecla = getch ();
 <<<<<<< HEAD
+<<<<<<< HEAD
 				}
 >>>>>>> 3e751f23ac57e7d98b0cb8f73d6995e4f3e578cc
+=======
+>>>>>>> parent of 3e751f2... Menu de customização
 =======
 >>>>>>> parent of 3e751f2... Menu de customização
 			}
@@ -472,6 +478,7 @@ int main()
 				gold += 50;
 			}	
 		}
+<<<<<<< HEAD
 			
 		printf("%d\n", jogador.pos);
 				
@@ -487,6 +494,8 @@ int main()
 		if (kbhit())
 			tecla = getch ();
 	
+=======
+>>>>>>> parent of 3e751f2... Menu de customização
 	}
 	closegraph();
 	return (0);
