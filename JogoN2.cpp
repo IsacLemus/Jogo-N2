@@ -66,7 +66,7 @@ struct StructPecas
 		Preco;
 };
 
-bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], int tamX, int tamY, int FaseAtual)
+bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], void *F[], int tamX, int tamY, int FaseAtual)
 {
 	bool resultado;
 	
@@ -114,9 +114,28 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			cleardevice();
 					
 			//Desenhar a fase
-			putimage(Fase[FaseAtual].pos, 0, R[0], COPY_PUT);
-			putimage(Fase[FaseAtual].pos+tamX, 0, R[0], COPY_PUT);
-			putimage(Fase[FaseAtual].pos+(tamX*2), 0, R[1], COPY_PUT);
+			if(Fase[FaseAtual].mapa==CIDADE)
+			{printf("1");
+				putimage(Fase[FaseAtual].pos, 0, F[0], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[0], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[1], COPY_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==PRAIA)
+			{printf("2");
+				putimage(Fase[FaseAtual].pos, 0, F[2], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[2], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[3], COPY_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==GRANDPRIX)
+			{printf("3");
+				putimage(Fase[FaseAtual].pos, 0, F[4], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[4], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[5], COPY_PUT);
+			}
+			
+			
 			
 			setfillstyle(1,RGB(255,0,0));
 			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
@@ -219,6 +238,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 int main()
 {	
 	//Imagens
+	void *F[6];
 	void *R[3]; // Teste
 	
 	//Variaveis do jogo
@@ -234,7 +254,6 @@ int main()
 	Fase[0].mapa = CIDADE;
 	Fase[0].pos = 0,
 	Fase[0].comprimento = 10000;
-	Fase[0].mapa = CIDADE;
 	Fase[0].motor = 1;
 	Fase[0].reducaoPeso = 1;
 	Fase[0].injecao = 1;
@@ -245,7 +264,6 @@ int main()
 	Fase[1].mapa = PRAIA;
 	Fase[1].pos = 0,
 	Fase[1].comprimento = 20000;
-	Fase[1].mapa = CIDADE;
 	Fase[1].motor = 3;
 	Fase[1].reducaoPeso = 2;
 	Fase[1].injecao = 3;
@@ -256,7 +274,6 @@ int main()
 	Fase[2].mapa = GRANDPRIX;
 	Fase[2].pos = 0,
 	Fase[2].comprimento = 30000;
-	Fase[2].mapa = CIDADE;
 	Fase[2].motor = 5;
 	Fase[2].reducaoPeso = 3;
 	Fase[2].injecao = 5;
@@ -474,6 +491,31 @@ int main()
 	R[0] = malloc(tamImagem);
 	R[1] = malloc(tamImagem);
 	R[2] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
+	
+	//Imagens das fases
+	F[0] = malloc(tamImagem);
+	F[1] = malloc(tamImagem);
+	F[2] = malloc(tamImagem);
+	F[3] = malloc(tamImagem);
+	F[4] = malloc(tamImagem);
+	F[5] = malloc(tamImagem);
+	
+	
+	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, F[0]);
+	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, F[1]);
+	
+	readimagefile("Sprites/FundoFase2.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, F[2]);
+	readimagefile("Sprites/FundoFase2Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, F[3]);
+	
+	readimagefile("Sprites/FundoFase3.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, F[4]);
+	readimagefile("Sprites/FundoFase3Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, F[5]);
+	
 	
 	
 	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
@@ -981,7 +1023,7 @@ int main()
 				{
 					quantidadeDeCorridas ++;
 					
-					result = iniciarCorrida(jogador, oponente, Fase, R, tamX, tamY, FaseAtual);
+					result = iniciarCorrida(jogador, oponente, Fase, R, F, tamX, tamY, FaseAtual);
 					
 					if(result == true)
 					{
