@@ -444,6 +444,8 @@ int main()
 				
 				//Desenhos
 				
+				//Menu de customizacao
+				//Desenhos do menu
 				if(menuAtual2 == MENUMOTOR)
 				{
 					setbkcolor(RGB(237, 28, 36));
@@ -476,6 +478,7 @@ int main()
 					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
 				}
 				
+				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUTURBO)
 				{
 					setbkcolor(RGB(237, 28, 36));
@@ -508,10 +511,178 @@ int main()
 					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
 				}
 				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUREDPESO)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaRedPesosTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, RedutorPeso[ListaRedPesos[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(RedutorPeso[ListaRedPesos[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(RedutorPeso[ListaRedPesos[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUINJECAO)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaInjecoesTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Injecao[ListaInjecoes[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(Injecao[ListaInjecoes[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(Injecao[ListaInjecoes[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUSUSPENSAO)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaSuspensoresTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Suspensao[ListaSuspensores[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(Suspensao[ListaSuspensores[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(Suspensao[ListaSuspensores[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUNITRO)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaNitrosTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Nitro[ListaNitros[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(Nitro[ListaNitros[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(Nitro[ListaNitros[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUPNEU)
+				{
+					setbkcolor(RGB(237, 28, 36));
+					setcolor(RGB(0, 0, 0));
+					setlinestyle(0, 0, 1);
+					
+					for(i = 0; i < ListaPneusTamanho; i++)
+					{
+						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
+						
+						strcpy(Texto, Pneu[ListaPneus[i]].Nome);
+						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(Pneu[ListaPneus[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(Pneu[ListaPneus[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+					}
+					
+					setcolor(RGB(30, 30, 200));
+					setlinestyle(0, 0, 3);
+					rectangle(Menu1PosX, Menu1PosY + (Menu1PosYD * Selecao), Menu1PosX + 335, Menu1PosY + 45 + (Menu1PosYD * Selecao));
+				}
+				
 				//Deixa a pagina visivel
 				setvisualpage(pg);
 				
+				//--------------------------------------------------------------------------------------------------------------------------
+				
 				//Acoes
+				//Menu de customizacao
 				if(tecla == RIGHT)
 				{
 					menuAtual2 ++;
@@ -521,6 +692,7 @@ int main()
 						menuAtual2 = 0;
 					}
 				}
+				
 				if(tecla == LEFT)
 				{
 					menuAtual2 --;
@@ -531,6 +703,7 @@ int main()
 					}
 				}
 				
+				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUMOTOR)
 				{
 					if(tecla == UP && Selecao > 0)
@@ -559,6 +732,7 @@ int main()
 					}
 				}
 				
+				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUTURBO)
 				{
 					if(tecla == UP && Selecao > 0)
@@ -582,6 +756,151 @@ int main()
 							{
 								gold -= Turbo[ListaTurbos[Selecao]].Preco;
 								Turbo[ListaTurbos[Selecao]].Preco = 0;
+							}
+						}
+					}
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUREDPESO)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						if(Motor[ListaRedPesos[Selecao]].Preco <= 0)
+						{
+							jogador.reducaoPeso = RedutorPeso[ListaRedPesos[Selecao]].Valor;
+							printf("\nRedutor de Peso: %d", jogador.reducaoPeso);
+						}
+						else
+						{
+							if(gold >= RedutorPeso[ListaRedPesos[Selecao]].Preco)
+							{
+								gold -= RedutorPeso[ListaRedPesos[Selecao]].Preco;
+								RedutorPeso[ListaRedPesos[Selecao]].Preco = 0;
+							}
+						}
+					}
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUINJECAO)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						if(Injecao[ListaInjecoes[Selecao]].Preco <= 0)
+						{
+							jogador.injecao = Injecao[ListaInjecoes[Selecao]].Valor;
+							printf("\nInjecao: %d", jogador.injecao);
+						}
+						else
+						{
+							if(gold >= Injecao[ListaInjecoes[Selecao]].Preco)
+							{
+								gold -= Injecao[ListaInjecoes[Selecao]].Preco;
+								Injecao[ListaInjecoes[Selecao]].Preco = 0;
+							}
+						}
+					}
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUSUSPENSAO)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						if(Suspensao[ListaSuspensores[Selecao]].Preco <= 0)
+						{
+							jogador.suspensao = Suspensao[ListaSuspensores[Selecao]].Valor;
+							printf("\nSuspensao: %d", jogador.suspensao);
+						}
+						else
+						{
+							if(gold >= Suspensao[ListaSuspensores[Selecao]].Preco)
+							{
+								gold -= Suspensao[ListaSuspensores[Selecao]].Preco;
+								Suspensao[ListaSuspensores[Selecao]].Preco = 0;
+							}
+						}
+					}
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUNITRO)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						if(Nitro[ListaNitros[Selecao]].Preco <= 0)
+						{
+							jogador.nitro = Nitro[ListaNitros[Selecao]].Valor;
+							printf("\nNitro: %d", jogador.nitro);
+						}
+						else
+						{
+							if(gold >= Nitro[ListaNitros[Selecao]].Preco)
+							{
+								gold -= Nitro[ListaNitros[Selecao]].Preco;
+								Nitro[ListaNitros[Selecao]].Preco = 0;
+							}
+						}
+					}
+				}
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				if(menuAtual2 == MENUPNEU)
+				{
+					if(tecla == UP && Selecao > 0)
+					{
+						Selecao --;
+					}
+					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					{
+						Selecao ++;
+					}
+					if(tecla == TECLAENTER)
+					{
+						if(Pneu[ListaPneus[Selecao]].Preco <= 0)
+						{
+							jogador.pneu = Pneu[ListaPneus[Selecao]].Valor;
+							printf("\nPneu: %d", jogador.pneu);
+						}
+						else
+						{
+							if(gold >= Pneu[ListaPneus[Selecao]].Preco)
+							{
+								gold -= Pneu[ListaPneus[Selecao]].Preco;
+								Pneu[ListaPneus[Selecao]].Preco = 0;
 							}
 						}
 					}
