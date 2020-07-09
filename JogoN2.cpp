@@ -15,7 +15,6 @@
 
 enum NomeDosMenus {MENUPRINCIPAL, CUSTOMIZACAOCARRO};
 enum NomeDosMenusCustomizacao {MENUMOTOR, MENUTURBO, MENUREDPESO, MENUINJECAO, MENUSUSPENSAO, MENUNITRO, MENUPNEU};
-
 enum NomeDosMapas {CIDADE, PRAIA, GRANDPRIX};
 
 enum Motores {MOTOR1, MOTOR2, MOTOR3};
@@ -30,7 +29,15 @@ struct StructFase
 {
 	int pos,
 		comprimento,
-		mapa;
+		mapa,
+		motor,
+		turbo,
+		reducaoPeso,
+		injecao,
+		suspensao,
+		nitro,
+		pneu;
+		
 };
 
 struct StructCarro
@@ -57,7 +64,7 @@ struct StructPecas
 		Preco;
 };
 
-bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, void *R[], int tamX, int tamY){
+bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], int tamX, int tamY, int FaseAtual){
 	bool resultado;
 	
 	int pg = 1;
@@ -65,11 +72,19 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 	int FPS = 60;
 	char tecla = 0;
 	
-	jogador.pos = Fase.pos;
+	jogador.pos = Fase[FaseAtual].pos;
 	jogador.aceleracao = 5;
+	
 	oponente.aceleracao = 1;
 	oponente.pos =0;
 	oponente.velocidade = 0;
+	oponente.motor=Fase[FaseAtual].motor;
+	oponente.turbo=Fase[FaseAtual].turbo;
+	oponente.reducaoPeso=Fase[FaseAtual].reducaoPeso;
+	oponente.injecao=Fase[FaseAtual].injecao;
+	oponente.suspensao=Fase[FaseAtual].suspensao;
+	oponente.nitro=Fase[FaseAtual].nitro;
+	oponente.pneu=Fase[FaseAtual].pneu;
 	
 	gt1 = GetTickCount();
 	
@@ -86,9 +101,9 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 			cleardevice();
 					
 			//Desenhar a fase
-			putimage(Fase.pos, 0, R[0], COPY_PUT);
-			putimage(Fase.pos+tamX, 0, R[0], COPY_PUT);
-			putimage(Fase.pos+(tamX*2), 0, R[1], COPY_PUT);
+			putimage(Fase[FaseAtual].pos, 0, R[0], COPY_PUT);
+			putimage(Fase[FaseAtual].pos+tamX, 0, R[0], COPY_PUT);
+			putimage(Fase[FaseAtual].pos+(tamX*2), 0, R[1], COPY_PUT);
 			
 			setfillstyle(1,RGB(0,255,0));
 			bar(jogador.posX,520,jogador.posX+100,570);
@@ -125,7 +140,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 		    if(oponente.velocidade <= oponente.velocidadeMax){
 				oponente.velocidade += oponente.aceleracao;
 			}
-			if(oponente.pos < Fase.comprimento + 2000)
+			if(oponente.pos < Fase[FaseAtual].comprimento + 2000)
 			{
 				oponente.pos += oponente.velocidade;
 				oponente.posX += oponente.velocidade;
@@ -133,18 +148,18 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase, 
 		    
 		    jogador.pos += jogador.velocidade;
 			
-			if((jogador.posX > tamX / 3) && (Fase.pos > -2000))
+			if((jogador.posX > tamX / 3) && (Fase[FaseAtual].pos > -2000))
 			{
-				Fase.pos -= jogador.velocidade;
+				Fase[FaseAtual].pos -= jogador.velocidade;
 				oponente.posX -= jogador.velocidade;
-				if((Fase.pos < -(tamX)) && ((Fase.comprimento - jogador.pos) > 2000))
+				if((Fase[FaseAtual].pos < -(tamX)) && ((Fase[FaseAtual].comprimento - jogador.pos) > 2000))
 				{
-					Fase.pos += tamX;
+					Fase[FaseAtual].pos += tamX;
 				}
 				
-				if(Fase.pos < -2000)
+				if(Fase[FaseAtual].pos < -2000)
 				{
-					Fase.pos = -2000;
+					Fase[FaseAtual].pos = -2000;
 				}
 			}
 			else
@@ -191,11 +206,12 @@ int main()
 	StructCarro jogador,
 		  		oponente;
 		  
-	StructFase Fase;
+	StructFase Fase[3];
 	
-	Fase.pos = 0,
-	Fase.comprimento = 15000;
-	Fase.mapa = CIDADE;
+	
+	Fase[0].pos = 0,
+	Fase[0].comprimento = 15000;
+	Fase[0].mapa = CIDADE;
 	
 	//Jogador
 	jogador.pos = 0;
@@ -413,10 +429,13 @@ int main()
 	R[1] = malloc(tamImagem);
 	R[2] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
 	
+	
 	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
 	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, R[1]);
+	
+	
 	readimagefile("Sprites/menuCustomizacao1.bmp", 0, 0, 335 - 1, 45 - 1);
 	getimage(0, 0, 335 - 1, 45 - 1, R[2]);
 	
