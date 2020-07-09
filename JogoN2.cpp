@@ -11,6 +11,8 @@
 
 #define TECLAENTER		13
 #define TECLABACKSPACE	8
+#define TECLAI			105
+
 #define CR	13
 
 enum NomeDosMenus {MENUPRINCIPAL, CUSTOMIZACAOCARRO};
@@ -37,13 +39,13 @@ struct StructFase
 		suspensao,
 		nitro,
 		pneu;
-		
 };
 
 struct StructCarro
 {
 	int pos,
 		posX,
+		posY,
 		velocidade,
 		aceleracao,
 		velocidadeMax;
@@ -64,7 +66,8 @@ struct StructPecas
 		Preco;
 };
 
-bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], int tamX, int tamY, int FaseAtual){
+bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], int tamX, int tamY, int FaseAtual)
+{
 	bool resultado;
 	
 	int pg = 1;
@@ -72,12 +75,15 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	int FPS = 60;
 	char tecla = 0;
 	
-	jogador.pos = Fase[FaseAtual].pos;
-	jogador.aceleracao = 5;
+	Fase[FaseAtual].pos = 0;
 	
-	oponente.aceleracao = 1;
-	oponente.pos =0;
-	oponente.velocidade = 0;
+	jogador.pos = 0;
+	jogador.posX = 0;
+	jogador.posY = 500;
+	jogador.aceleracao = 5;
+	jogador.velocidade = 0;
+	jogador.velocidadeMax = 30 * jogador.motor;
+	
 	oponente.motor=Fase[FaseAtual].motor;
 	oponente.turbo=Fase[FaseAtual].turbo;
 	oponente.reducaoPeso=Fase[FaseAtual].reducaoPeso;
@@ -85,6 +91,13 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	oponente.suspensao=Fase[FaseAtual].suspensao;
 	oponente.nitro=Fase[FaseAtual].nitro;
 	oponente.pneu=Fase[FaseAtual].pneu;
+	
+	oponente.pos =0;
+	oponente.posX = 0;
+	oponente.posY = 400;
+	oponente.aceleracao = 2;
+	oponente.velocidade = 0;
+	oponente.velocidadeMax = 30 * oponente.motor;
 	
 	gt1 = GetTickCount();
 	
@@ -105,41 +118,50 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			putimage(Fase[FaseAtual].pos+tamX, 0, R[0], COPY_PUT);
 			putimage(Fase[FaseAtual].pos+(tamX*2), 0, R[1], COPY_PUT);
 			
-			setfillstyle(1,RGB(0,255,0));
-			bar(jogador.posX,520,jogador.posX+100,570);
 			setfillstyle(1,RGB(255,0,0));
-			bar(oponente.posX,400,oponente.posX+100,450);
+			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
+			
+			setfillstyle(1,RGB(0,255,0));
+			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
 			
 			//Deixa a pagina visivel
 			setvisualpage(pg);
 			
 			//Movimentação do jogador
-			//jogador.velocidade = 0;
-			
-			if(GetKeyState(VK_RIGHT)&0x80)
+			//Comandos
+			if(GetKeyState(0x44)&0x80)
 			{
 				jogador.velocidade += jogador.aceleracao;
-				if(jogador.velocidade > jogador.velocidadeMax)
-				{
-					jogador.velocidade = jogador.velocidadeMax;
-				}
 			}
-			else if(GetKeyState(VK_LEFT)&0x80)
+			else if(GetKeyState(0x41)&0x80)
 			{
 				jogador.velocidade -= jogador.aceleracao*5;
-				if(jogador.velocidade < 0)
-				{
-					jogador.velocidade = 0;
-				}
 			}
 			else if(GetKeyState(VK_SPACE)&0x80)
 			{
 				jogador.velocidade += jogador.aceleracao*5;
 			}
+			
+			//Controle das velocidades
+			if(jogador.velocidade > jogador.velocidadeMax)
+			{
+				jogador.velocidade = jogador.velocidadeMax;
+			}
+			if(jogador.velocidade < 0)
+			{
+				jogador.velocidade = 0;
+			}
 
-		    if(oponente.velocidade <= oponente.velocidadeMax){
+		    if(oponente.velocidade <= oponente.velocidadeMax)
+			{
 				oponente.velocidade += oponente.aceleracao;
 			}
+			if(oponente.velocidade > oponente.velocidadeMax)
+			{
+				oponente.velocidade = oponente.velocidadeMax;
+			}
+			
+			//Alterar as posicoes dos carros
 			if(oponente.pos < Fase[FaseAtual].comprimento + 2000)
 			{
 				oponente.pos += oponente.velocidade;
@@ -177,7 +199,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			fflush(stdin);
 			if (kbhit())
 			{
-				tecla = getch ();
+				tecla = getch();
 			}
 		}
 	}
@@ -209,9 +231,38 @@ int main()
 	StructFase Fase[3];
 	
 	
-	Fase[0].pos = 0,
-	Fase[0].comprimento = 15000;
 	Fase[0].mapa = CIDADE;
+	Fase[0].pos = 0,
+	Fase[0].comprimento = 10000;
+	Fase[0].mapa = CIDADE;
+	Fase[0].motor = 1;
+	Fase[0].reducaoPeso = 1;
+	Fase[0].injecao = 1;
+	Fase[0].suspensao = 1;
+	Fase[0].nitro = 1000;
+	Fase[0].pneu = 1;
+	
+	Fase[1].mapa = PRAIA;
+	Fase[1].pos = 0,
+	Fase[1].comprimento = 20000;
+	Fase[1].mapa = CIDADE;
+	Fase[1].motor = 3;
+	Fase[1].reducaoPeso = 2;
+	Fase[1].injecao = 3;
+	Fase[1].suspensao = 3;
+	Fase[1].nitro = 1500;
+	Fase[1].pneu = 3;
+	
+	Fase[2].mapa = GRANDPRIX;
+	Fase[2].pos = 0,
+	Fase[2].comprimento = 30000;
+	Fase[2].mapa = CIDADE;
+	Fase[2].motor = 5;
+	Fase[2].reducaoPeso = 3;
+	Fase[2].injecao = 5;
+	Fase[2].suspensao = 5;
+	Fase[2].nitro = 1500;
+	Fase[2].pneu = 5;
 	
 	//Jogador
 	jogador.pos = 0;
@@ -235,14 +286,6 @@ int main()
 	oponente.velocidade = 0;
 	oponente.velocidadeMax = 0;
 	
-	oponente.motor = 1;
-	oponente.turbo = 1;
-	oponente.reducaoPeso = 1;
-	oponente.injecao = 1;
-	oponente.suspensao = 1;
-	oponente.nitro = 1;
-	oponente.pneu = 1;
-	
 	//Variaveis de controle
 	int pg = 1,
 		tamX = 1000,
@@ -250,17 +293,20 @@ int main()
 		FPS = 60,
 		tamImagem = 0,
 		i = 0,
-		Selecao = 0;
+		Selecao = 0,
+		quantidadeDeCorridas = 0;
 	
 	char tecla = 0,
 		 Texto[50],
 		 Texto2[50];
+	
 	unsigned long long gt1, gt2;
 	
 	//Variaveis dos menus
 	int menuAtual = 0,
 		menuAtual2 = 0;
-	bool result = false;
+	bool result = false,
+		 comecarCorrida = false;
 	
 	int Menu1PosX = 60,
 		Menu1PosY = 190,
@@ -368,11 +414,11 @@ int main()
 	Injecao[INJECAO1].Preco = 0;
 	
 	strcpy(Injecao[INJECAO2].Nome, "Injeção Eletrônica");
-	Injecao[INJECAO2].Valor = 1;
+	Injecao[INJECAO2].Valor = 3;
 	Injecao[INJECAO2].Preco = 50;
 	
 	strcpy(Injecao[INJECAO3].Nome, "Injeção Reprogramada");
-	Injecao[INJECAO3].Valor = 1;
+	Injecao[INJECAO3].Valor = 5;
 	Injecao[INJECAO3].Preco = 100;
 	
 	//Suspensores
@@ -383,11 +429,11 @@ int main()
 	Suspensao[SUSPENSAO1].Preco = 0;
 	
 	strcpy(Suspensao[SUSPENSAO2].Nome, "McPherson");
-	Suspensao[SUSPENSAO2].Valor = 1;
+	Suspensao[SUSPENSAO2].Valor = 3;
 	Suspensao[SUSPENSAO2].Preco = 50;
 	
 	strcpy(Suspensao[SUSPENSAO3].Nome, "Multilink");
-	Suspensao[SUSPENSAO3].Valor = 1;
+	Suspensao[SUSPENSAO3].Valor = 5;
 	Suspensao[SUSPENSAO3].Preco = 100;
 	
 	//Nitros
@@ -441,14 +487,14 @@ int main()
 	
 	menuAtual = MENUPRINCIPAL;
 	menuAtual = CUSTOMIZACAOCARRO;
-	while(tecla != CR)
+	while(tecla != ESC)
 	{
-		while(menuAtual == MENUPRINCIPAL)
+		while(menuAtual == MENUPRINCIPAL && tecla != ESC)
 		{
 			//Alguma coisa
 		}
 		
-		while(menuAtual == CUSTOMIZACAOCARRO)
+		while(menuAtual == CUSTOMIZACAOCARRO && tecla != ESC)
 		{
 			gt2 = GetTickCount();
 			if (gt2 - gt1 > 1000/FPS)
@@ -722,6 +768,11 @@ int main()
 					}
 				}
 				
+				if(tecla == TECLAI)
+				{
+					comecarCorrida = true;
+				}
+				
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUMOTOR)
 				{
@@ -925,33 +976,36 @@ int main()
 					}
 				}
 				
-				/*
-				//Corrida (Beta)
-				if(FaseAtual == 0)
+				//Corrida -------------------------------------------------------------------------------------------
+				if(comecarCorrida == true)
 				{
-					oponente.velocidadeMax = 10;
-					oponente.velocidade = 0;
-					jogador.velocidade = 0;
-					jogador.velocidadeMax = 100;
-					jogador.posX = 0;
-					oponente.posX = 0;
-					result = iniciarCorrida(jogador, oponente, Fase, R, tamX, tamY);
-					if (result){
-						FaseAtual = 1;
-						gold += 100;
+					quantidadeDeCorridas ++;
+					
+					result = iniciarCorrida(jogador, oponente, Fase, R, tamX, tamY, FaseAtual);
+					
+					if(result == true)
+					{
+						gold += 100 + (100*FaseAtual) + (5*quantidadeDeCorridas);
+						
+						if(FaseAtual < 2)
+						{
+							FaseAtual ++;
+						}
 					}
-					else {
-						FaseAtual = 0;
-						gold += 50;
+					else
+					{
+						gold += (100 + (100*FaseAtual) + (5*quantidadeDeCorridas)) / 2;
 					}
+					
+					comecarCorrida = false;
 				}
-				*/
 				
 				tecla = 0;
 				fflush(stdin);
 				if (kbhit())
 				{
 					tecla = getch ();
+					//printf("\n%d", tecla);
 				}
 			}
 		}
