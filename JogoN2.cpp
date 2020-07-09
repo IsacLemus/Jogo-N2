@@ -16,6 +16,8 @@
 enum NomeDosMenus {MENUPRINCIPAL, CUSTOMIZACAOCARRO};
 enum NomeDosMenusCustomizacao {MENUMOTOR, MENUTURBO, MENUREDPESO, MENUINJECAO, MENUSUSPENSAO, MENUNITRO, MENUPNEU};
 
+enum NomeDosMapas {CIDADE, PRAIA, GRANDPRIX};
+
 enum Motores {MOTOR1, MOTOR2, MOTOR3};
 enum Turbos {TURBO1, TURBO2, TURBO3};
 enum RedPeso {REDP1, REDP2, REDP3};
@@ -27,7 +29,8 @@ enum Pneu {PNEU1, PNEU2, PNEU3};
 struct StructFase
 {
 	int pos,
-		comprimento;
+		comprimento,
+		mapa;
 };
 
 struct StructCarro
@@ -182,7 +185,7 @@ int main()
 	void *R[3]; // Teste
 	
 	//Variaveis do jogo
-	int gold = 0,
+	int gold = 100000,
 		FaseAtual = 0;
 	
 	StructCarro jogador,
@@ -192,6 +195,7 @@ int main()
 	
 	Fase.pos = 0,
 	Fase.comprimento = 15000;
+	Fase.mapa = CIDADE;
 	
 	//Jogador
 	jogador.pos = 0;
@@ -452,6 +456,19 @@ int main()
 						
 						strcpy(Texto, Motor[ListaMotores[i]].Nome);
 						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(Motor[ListaMotores[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(Motor[ListaMotores[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
 					}
 					
 					setcolor(RGB(30, 30, 200));
@@ -471,6 +488,19 @@ int main()
 						
 						strcpy(Texto, Turbo[ListaTurbos[i]].Nome);
 						outtextxy(Menu1PosX + 10, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
+						
+						if(Turbo[ListaTurbos[i]].Preco > 0)
+						{
+							strcpy(Texto, "Preco: ");
+							itoa(Turbo[ListaTurbos[i]].Preco, Texto2, 10);
+							strcat(Texto, Texto2);
+						}
+						else
+						{
+							strcpy(Texto, "Adquirido");
+						}
+						
+						outtextxy(Menu1PosX + 250, Menu1PosY + (Menu1PosYD * i) + 15, Texto);
 					}
 					
 					setcolor(RGB(30, 30, 200));
@@ -513,8 +543,19 @@ int main()
 					}
 					if(tecla == TECLAENTER)
 					{
-						jogador.motor = Motor[ListaMotores[Selecao]].Valor;
-						printf("\nMotor: %d", jogador.motor);
+						if(Motor[ListaMotores[Selecao]].Preco <= 0)
+						{
+							jogador.motor = Motor[ListaMotores[Selecao]].Valor;
+							printf("\nMotor: %d", jogador.motor);
+						}
+						else
+						{
+							if(gold >= Motor[ListaMotores[Selecao]].Preco)
+							{
+								gold -= Motor[ListaMotores[Selecao]].Preco;
+								Motor[ListaMotores[Selecao]].Preco = 0;
+							}
+						}
 					}
 				}
 				
@@ -530,11 +571,23 @@ int main()
 					}
 					if(tecla == TECLAENTER)
 					{
-						jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
-						printf("\nTurbo: %d", jogador.turbo);
+						if(Motor[ListaTurbos[Selecao]].Preco <= 0)
+						{
+							jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
+							printf("\nTurbo: %d", jogador.turbo);
+						}
+						else
+						{
+							if(gold >= Turbo[ListaTurbos[Selecao]].Preco)
+							{
+								gold -= Turbo[ListaTurbos[Selecao]].Preco;
+								Turbo[ListaTurbos[Selecao]].Preco = 0;
+							}
+						}
 					}
 				}
 				
+				/*
 				//Corrida (Beta)
 				if(FaseAtual == 0)
 				{
@@ -554,6 +607,7 @@ int main()
 						gold += 50;
 					}
 				}
+				*/
 				
 				tecla = 0;
 				fflush(stdin);
