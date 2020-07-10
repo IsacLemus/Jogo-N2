@@ -313,7 +313,7 @@ int main()
 	StructCarro jogador,
 		  		oponente;
 		  
-	StructFase Fase[3];
+	StructFase Fase[9];
 	
 	Fase[0].mapa = CIDADE;
 	Fase[0].pos = 0,
@@ -325,25 +325,85 @@ int main()
 	Fase[0].nitro = 1000;
 	Fase[0].pneu = 1;
 	
-	Fase[1].mapa = PRAIA;
+	Fase[1].mapa = CIDADE;
 	Fase[1].pos = 0,
-	Fase[1].comprimento = 35000;
-	Fase[1].motor = 3;
-	Fase[1].reducaoPeso = 2;
-	Fase[1].injecao = 3;
-	Fase[1].suspensao = 3;
-	Fase[1].nitro = 1500;
-	Fase[1].pneu = 3;
+	Fase[1].comprimento = 20000;
+	Fase[1].motor = 1;
+	Fase[1].reducaoPeso = 1;
+	Fase[1].injecao = 1;
+	Fase[1].suspensao = 1;
+	Fase[1].nitro = 1000;
+	Fase[1].pneu = 1;
 	
-	Fase[2].mapa = GRANDPRIX;
+	Fase[2].mapa = CIDADE;
 	Fase[2].pos = 0,
-	Fase[2].comprimento = 50000;
-	Fase[2].motor = 5;
-	Fase[2].reducaoPeso = 3;
-	Fase[2].injecao = 5;
-	Fase[2].suspensao = 5;
-	Fase[2].nitro = 1500;
-	Fase[2].pneu = 5;
+	Fase[2].comprimento = 25000;
+	Fase[2].motor = 2;
+	Fase[2].reducaoPeso = 1;
+	Fase[2].injecao = 1;
+	Fase[2].suspensao = 1;
+	Fase[2].nitro = 1000;
+	Fase[2].pneu = 1;
+	
+	Fase[3].mapa = PRAIA;
+	Fase[3].pos = 0,
+	Fase[3].comprimento = 35000;
+	Fase[3].motor = 2;
+	Fase[3].reducaoPeso = 2;
+	Fase[3].injecao = 2;
+	Fase[3].suspensao = 3;
+	Fase[3].nitro = 1500;
+	Fase[3].pneu = 2;
+	
+	Fase[4].mapa = PRAIA;
+	Fase[4].pos = 0,
+	Fase[4].comprimento = 40000;
+	Fase[4].motor = 3;
+	Fase[4].reducaoPeso = 2;
+	Fase[4].injecao = 2;
+	Fase[4].suspensao = 3;
+	Fase[4].nitro = 1500;
+	Fase[4].pneu = 2;
+	
+	Fase[5].mapa = PRAIA;
+	Fase[5].pos = 0,
+	Fase[5].comprimento = 45000;
+	Fase[5].motor = 3;
+	Fase[5].reducaoPeso = 2;
+	Fase[5].injecao = 2;
+	Fase[5].suspensao = 3;
+	Fase[5].nitro = 1500;
+	Fase[5].pneu = 2;
+	
+	Fase[6].mapa = GRANDPRIX;
+	Fase[6].pos = 0,
+	Fase[6].comprimento = 50000;
+	Fase[6].motor = 4;
+	Fase[6].reducaoPeso = 3;
+	Fase[6].injecao = 3;
+	Fase[6].suspensao = 5;
+	Fase[6].nitro = 1500;
+	Fase[6].pneu = 3;
+	
+	Fase[7].mapa = GRANDPRIX;
+	Fase[7].pos = 0,
+	Fase[7].comprimento = 55000;
+	Fase[7].motor = 4;
+	Fase[7].reducaoPeso = 3;
+	Fase[7].injecao = 3;
+	Fase[7].suspensao = 5;
+	Fase[7].nitro = 1500;
+	Fase[7].pneu = 3;
+	
+	Fase[8].mapa = GRANDPRIX;
+	Fase[8].pos = 0,
+	Fase[8].comprimento = 60000;
+	Fase[8].motor = 5;
+	Fase[8].reducaoPeso = 3;
+	Fase[8].injecao = 3;
+	Fase[8].suspensao = 5;
+	Fase[8].nitro = 1500;
+	Fase[8].pneu = 3;
 	
 	//Variaveis de controle
 	int pg = 1,
@@ -364,6 +424,7 @@ int main()
 	//Variaveis dos menus
 	int menuAtual = 0,
 		menuAtual2 = 0;
+	
 	bool result = false,
 		 comecarCorrida = false;
 	
@@ -1169,7 +1230,7 @@ int main()
 						tocarSom(SOMVITORIA);
 						gold += 100 + (100*FaseAtual) + (5*quantidadeDeCorridas);
 						
-						if(FaseAtual < 2)
+						if(FaseAtual < 8)
 						{
 							FaseAtual ++;
 						}
