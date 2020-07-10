@@ -996,7 +996,7 @@ int main()
 					}
 					if(tecla == TECLAENTER)
 					{
-						if(Motor[ListaTurbos[Selecao]].Preco <= 0)
+						if(Turbo[ListaTurbos[Selecao]].Preco <= 0)
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
@@ -1033,7 +1033,7 @@ int main()
 					}
 					if(tecla == TECLAENTER)
 					{
-						if(Motor[ListaRedPesos[Selecao]].Preco <= 0)
+						if(RedutorPeso[ListaRedPesos[Selecao]].Preco <= 0)
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.reducaoPeso = RedutorPeso[ListaRedPesos[Selecao]].Valor;
