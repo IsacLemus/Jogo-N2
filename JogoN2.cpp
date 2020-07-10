@@ -1,7 +1,7 @@
 #include<stdio.h>
-#include<iostream>
 #include<graphics.h>
 #include <time.h>
+#include <windows.h>
 
 #define LEFT   	75
 #define RIGHT  	77
@@ -12,8 +12,6 @@
 #define TECLAENTER		13
 #define TECLABACKSPACE	8
 #define TECLAI			105
-
-#define CR	13
 
 enum NomeDosMenus {MENUPRINCIPAL, CUSTOMIZACAOCARRO};
 enum NomeDosMenusCustomizacao {MENUMOTOR, MENUTURBO, MENUREDPESO, MENUINJECAO, MENUSUSPENSAO, MENUNITRO, MENUPNEU};
@@ -27,12 +25,15 @@ enum Suspencao {SUSPENSAO1, SUSPENSAO2, SUSPENSAO3};
 enum Nitro {NITRO1, NITRO2, NITRO3};
 enum Pneu {PNEU1, PNEU2, PNEU3};
 
+enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO};
+
 struct StructFase
 {
 	int pos,
 		comprimento,
-		mapa,
-		motor,
+		mapa;
+		
+	int motor,
 		turbo,
 		reducaoPeso,
 		injecao,
@@ -46,6 +47,7 @@ struct StructCarro
 	int pos,
 		posX,
 		posY,
+		tanque,
 		velocidade,
 		aceleracao,
 		velocidadeMax;
@@ -66,6 +68,8 @@ struct StructPecas
 		Preco;
 };
 
+void tocarSom(int som);
+
 bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], void *F[], int tamX, int tamY, int FaseAtual)
 {
 	bool resultado;
@@ -75,14 +79,26 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	int FPS = 60;
 	char tecla = 0;
 	
+	//Turbo
+	int turboAceleracao = jogador.suspensao,
+		turboVelocidadeMax = jogador.turbo,
+		turboVelocidade = 0,
+		tempoTurbo = 0;
+	
+	bool SpacePress = false,
+		 turboAcelerando = false;
+	
 	Fase[FaseAtual].pos = 0;
 	
 	jogador.pos = 0;
 	jogador.posX = 0;
 	jogador.posY = 500;
-	jogador.aceleracao = 5;
+	jogador.tanque = jogador.nitro;
+	jogador.aceleracao = jogador.pneu;
+	jogador.aceleracao += jogador.injecao;
 	jogador.velocidade = 0;
-	jogador.velocidadeMax = 30 * jogador.motor;
+	jogador.velocidadeMax = 25 * jogador.motor;
+	jogador.velocidadeMax += (jogador.velocidadeMax * (jogador.reducaoPeso/10));
 	
 	oponente.motor=Fase[FaseAtual].motor;
 	oponente.turbo=Fase[FaseAtual].turbo;
@@ -95,9 +111,12 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	oponente.pos =0;
 	oponente.posX = 0;
 	oponente.posY = 400;
-	oponente.aceleracao = 2;
+	oponente.tanque = oponente.nitro;
+	oponente.aceleracao = oponente.pneu;
+	oponente.aceleracao += oponente.injecao;
 	oponente.velocidade = 0;
-	oponente.velocidadeMax = 30 * oponente.motor;
+	oponente.velocidadeMax = 26 * oponente.motor;
+	oponente.velocidadeMax += (oponente.velocidadeMax * (oponente.reducaoPeso/10));
 	
 	gt1 = GetTickCount();
 	
@@ -115,21 +134,21 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 					
 			//Desenhar a fase
 			if(Fase[FaseAtual].mapa==CIDADE)
-			{printf("1");
+			{
 				putimage(Fase[FaseAtual].pos, 0, F[0], COPY_PUT);
 				putimage(Fase[FaseAtual].pos+tamX, 0, F[0], COPY_PUT);
 				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[1], COPY_PUT);
 			}
 			
 			if(Fase[FaseAtual].mapa==PRAIA)
-			{printf("2");
+			{
 				putimage(Fase[FaseAtual].pos, 0, F[2], COPY_PUT);
 				putimage(Fase[FaseAtual].pos+tamX, 0, F[2], COPY_PUT);
 				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[3], COPY_PUT);
 			}
 			
 			if(Fase[FaseAtual].mapa==GRANDPRIX)
-			{printf("3");
+			{
 				putimage(Fase[FaseAtual].pos, 0, F[4], COPY_PUT);
 				putimage(Fase[FaseAtual].pos+tamX, 0, F[4], COPY_PUT);
 				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[5], COPY_PUT);
@@ -156,10 +175,47 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			{
 				jogador.velocidade -= jogador.aceleracao*5;
 			}
-			else if(GetKeyState(VK_SPACE)&0x80)
+			else if(jogador.velocidade > 0)
 			{
-				jogador.velocidade += jogador.aceleracao*5;
+				jogador.velocidade --;
 			}
+			
+			if((GetKeyState(VK_SPACE)&0x80) && (SpacePress == false) && (jogador.tanque > 0))
+			{
+				tocarSom(SOMNITRO);
+				tempoTurbo = 120;
+				jogador.tanque -= 500;
+				turboAcelerando = true;
+			}
+			
+			if(tempoTurbo > 0)
+			{
+				if(turboAcelerando == true)
+				{
+					turboVelocidade += turboAceleracao;
+					if(turboVelocidade > turboVelocidadeMax)
+					{
+						turboVelocidade = turboVelocidadeMax;
+						turboAcelerando = false;
+					}
+				}
+				
+				tempoTurbo --;
+			}
+			else
+			{
+				if(turboVelocidade > 0)
+				{
+					turboVelocidade --;
+				}
+			}
+			
+			/*
+			printf("\n\nTurbo Velocidade: %d", turboVelocidade);
+			printf("\nTurbo Acelerando:   %d", turboAcelerando);
+			printf("\nJogador Tanque: 	  %d", jogador.tanque);
+			printf("\nTurbo Tempo: 		  %d", tempoTurbo);
+			*/
 			
 			//Controle das velocidades
 			if(jogador.velocidade > jogador.velocidadeMax)
@@ -187,12 +243,12 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 				oponente.posX += oponente.velocidade;
 			}
 		    
-		    jogador.pos += jogador.velocidade;
+		    jogador.pos += jogador.velocidade + turboVelocidade;
 			
 			if((jogador.posX > tamX / 3) && (Fase[FaseAtual].pos > -2000))
 			{
-				Fase[FaseAtual].pos -= jogador.velocidade;
-				oponente.posX -= jogador.velocidade;
+				Fase[FaseAtual].pos -= jogador.velocidade + turboVelocidade;
+				oponente.posX -= jogador.velocidade + turboVelocidade;
 				if((Fase[FaseAtual].pos < -(tamX)) && ((Fase[FaseAtual].comprimento - jogador.pos) > 2000))
 				{
 					Fase[FaseAtual].pos += tamX;
@@ -205,7 +261,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			}
 			else
 			{
-				jogador.posX += jogador.velocidade;
+				jogador.posX += jogador.velocidade + turboVelocidade;
 			}
 			/*
 			printf("\n\nJogador PosX: %d", jogador.pos);
@@ -213,6 +269,15 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			printf("\nOponente PosX: %d", oponente.pos);
 			printf("\nOponente Vel: %d", oponente.velocidade);
 			*/
+			
+			if((GetKeyState(VK_SPACE)&0x80))
+		    {
+		    	SpacePress = true;
+			}
+			if(!(GetKeyState(VK_SPACE)&0x80))
+	      	{
+	      		SpacePress = false;
+			}
 			
 			tecla = 0;
 			fflush(stdin);
@@ -242,7 +307,7 @@ int main()
 	void *R[3]; // Teste
 	
 	//Variaveis do jogo
-	int gold = 100000,
+	int gold = 0,
 		FaseAtual = 0;
 	
 	StructCarro jogador,
@@ -250,10 +315,9 @@ int main()
 		  
 	StructFase Fase[3];
 	
-	
 	Fase[0].mapa = CIDADE;
 	Fase[0].pos = 0,
-	Fase[0].comprimento = 10000;
+	Fase[0].comprimento = 15000;
 	Fase[0].motor = 1;
 	Fase[0].reducaoPeso = 1;
 	Fase[0].injecao = 1;
@@ -263,7 +327,7 @@ int main()
 	
 	Fase[1].mapa = PRAIA;
 	Fase[1].pos = 0,
-	Fase[1].comprimento = 20000;
+	Fase[1].comprimento = 35000;
 	Fase[1].motor = 3;
 	Fase[1].reducaoPeso = 2;
 	Fase[1].injecao = 3;
@@ -273,35 +337,13 @@ int main()
 	
 	Fase[2].mapa = GRANDPRIX;
 	Fase[2].pos = 0,
-	Fase[2].comprimento = 30000;
+	Fase[2].comprimento = 50000;
 	Fase[2].motor = 5;
 	Fase[2].reducaoPeso = 3;
 	Fase[2].injecao = 5;
 	Fase[2].suspensao = 5;
 	Fase[2].nitro = 1500;
 	Fase[2].pneu = 5;
-	
-	//Jogador
-	jogador.pos = 0;
-	jogador.posX = 0;
-	jogador.aceleracao = 0;
-	jogador.velocidade = 0;
-	jogador.velocidadeMax = 0;
-	
-	jogador.motor = 1;
-	jogador.turbo = 1;
-	jogador.reducaoPeso = 1;
-	jogador.injecao = 1;
-	jogador.suspensao = 1;
-	jogador.nitro = 1;
-	jogador.pneu = 1;
-	
-	//Oponente
-	oponente.pos = 0;
-	oponente.posX = 0;
-	oponente.aceleracao = 0;
-	oponente.velocidade = 0;
-	oponente.velocidadeMax = 0;
 	
 	//Variaveis de controle
 	int pg = 1,
@@ -330,7 +372,7 @@ int main()
 		Menu1PosYD = 45;
 	
 	//Ponteiros --------------------------------------------------------------------
-	int ListaMotoresTamanho = 3,
+	int ListaMotoresTamanho = 1,
 		*ListaMotores = NULL;
 	
 	int ListaTurbosTamanho = 1,
@@ -352,10 +394,7 @@ int main()
 		*ListaPneus = NULL;
 	
 	ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
-	//ListaMotores[ListaMotoresTamanho - 1] = MOTOR1;
-	ListaMotores[0] = MOTOR1;
-	ListaMotores[1] = MOTOR2;
-	ListaMotores[2] = MOTOR3;
+	ListaMotores[ListaMotoresTamanho - 1] = MOTOR1;
 	
 	ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
 	ListaTurbos[ListaTurbosTamanho - 1] = TURBO1;
@@ -387,26 +426,26 @@ int main()
 	
 	strcpy(Motor[MOTOR2].Nome, "2.0 - 4 Cilindros Forjado");
 	Motor[MOTOR2].Valor = 3;
-	Motor[MOTOR2].Preco = 100;
+	Motor[MOTOR2].Preco = 300;
 	
 	strcpy(Motor[MOTOR3].Nome, "3.0 - 6 Cilindros em Linha 2JZ");
 	Motor[MOTOR3].Valor = 5;
-	Motor[MOTOR3].Preco = 300;
+	Motor[MOTOR3].Preco = 600;
 	
 	//Turbos
 	StructPecas Turbo[3];
 	
 	strcpy(Turbo[TURBO1].Nome, "Turbo Garret .42");
-	Turbo[TURBO1].Valor = 1;
+	Turbo[TURBO1].Valor = 20;
 	Turbo[TURBO1].Preco = 0;
 	
 	strcpy(Turbo[TURBO2].Nome, "Turbo Garret .50");
-	Turbo[TURBO2].Valor = 3;
-	Turbo[TURBO2].Preco = 50;
+	Turbo[TURBO2].Valor = 40;
+	Turbo[TURBO2].Preco = 100;
 	
 	strcpy(Turbo[TURBO3].Nome, "Twin Turbo");
-	Turbo[TURBO3].Valor = 5;
-	Turbo[TURBO3].Preco = 100;
+	Turbo[TURBO3].Valor = 60;
+	Turbo[TURBO3].Preco = 300;
 	
 	//Redutores de Peso
 	StructPecas RedutorPeso[3];
@@ -431,11 +470,11 @@ int main()
 	Injecao[INJECAO1].Preco = 0;
 	
 	strcpy(Injecao[INJECAO2].Nome, "Injeção Eletrônica");
-	Injecao[INJECAO2].Valor = 3;
+	Injecao[INJECAO2].Valor = 2;
 	Injecao[INJECAO2].Preco = 50;
 	
 	strcpy(Injecao[INJECAO3].Nome, "Injeção Reprogramada");
-	Injecao[INJECAO3].Valor = 5;
+	Injecao[INJECAO3].Valor = 3;
 	Injecao[INJECAO3].Preco = 100;
 	
 	//Suspensores
@@ -476,13 +515,27 @@ int main()
 	Pneu[PNEU1].Preco = 0;
 	
 	strcpy(Pneu[PNEU2].Nome, "Pneus Intemediarios");
-	Pneu[PNEU2].Valor = 3;
+	Pneu[PNEU2].Valor = 2;
 	Pneu[PNEU2].Preco = 50;
 	
 	strcpy(Pneu[PNEU3].Nome, "Pneus Profissionais");
-	Pneu[PNEU3].Valor = 5;
+	Pneu[PNEU3].Valor = 3;
 	Pneu[PNEU3].Preco = 100;
 	
+	//Jogador
+	jogador.pos = 0;
+	jogador.posX = 0;
+	jogador.aceleracao = 0;
+	jogador.velocidade = 0;
+	jogador.velocidadeMax = 0;
+	
+	jogador.motor = Motor[0].Valor;
+	jogador.turbo = Turbo[0].Valor;
+	jogador.reducaoPeso = RedutorPeso[0].Valor;
+	jogador.injecao = Injecao[0].Valor;
+	jogador.suspensao = Suspensao[0].Valor;
+	jogador.nitro = Nitro[0].Valor;
+	jogador.pneu = Pneu[0].Valor;
 	
 	//Iniciar a janela do jogo ----------------------------------------------------------------------------------------------
 	initwindow(tamX, tamY, "Click Tuning", 50, 50);
@@ -529,6 +582,8 @@ int main()
 	
 	menuAtual = MENUPRINCIPAL;
 	menuAtual = CUSTOMIZACAOCARRO;
+	tocarSom(VOL2);
+	tocarSom(MUSICAMENU);
 	while(tecla != ESC)
 	{
 		while(menuAtual == MENUPRINCIPAL && tecla != ESC)
@@ -553,6 +608,17 @@ int main()
 				
 				//Menu de customizacao
 				//Desenhos do menu
+				
+				//Mostrar coisas do jogador
+				setbkcolor(RGB(237, 28, 36));
+				setcolor(RGB(0, 0, 0));
+				setlinestyle(0, 0, 1);
+				
+				strcpy(Texto, "Dinheiro: R$ ");
+				itoa(gold, Texto2, 10);
+				strcat(Texto, Texto2);
+				outtextxy(700, 20, Texto);
+				
 				if(menuAtual2 == MENUMOTOR)
 				{
 					setbkcolor(RGB(237, 28, 36));
@@ -792,6 +858,7 @@ int main()
 				//Menu de customizacao
 				if(tecla == RIGHT)
 				{
+					tocarSom(SOMSELECIONAR);
 					menuAtual2 ++;
 					Selecao = 0;
 					if(menuAtual2 > 6)
@@ -802,6 +869,7 @@ int main()
 				
 				if(tecla == LEFT)
 				{
+					tocarSom(SOMSELECIONAR);
 					menuAtual2 --;
 					Selecao = 0;
 					if(menuAtual2 < 0)
@@ -820,16 +888,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
 					if(tecla == DOWN && Selecao < ListaMotoresTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Motor[ListaMotores[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.motor = Motor[ListaMotores[Selecao]].Valor;
 							printf("\nMotor: %d", jogador.motor);
 						}
@@ -837,8 +908,13 @@ int main()
 						{
 							if(gold >= Motor[ListaMotores[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= Motor[ListaMotores[Selecao]].Preco;
 								Motor[ListaMotores[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -849,16 +925,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
 					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Motor[ListaTurbos[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
 							printf("\nTurbo: %d", jogador.turbo);
 						}
@@ -866,8 +945,13 @@ int main()
 						{
 							if(gold >= Turbo[ListaTurbos[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= Turbo[ListaTurbos[Selecao]].Preco;
 								Turbo[ListaTurbos[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -878,16 +962,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
-					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					if(tecla == DOWN && Selecao < ListaRedPesosTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Motor[ListaRedPesos[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.reducaoPeso = RedutorPeso[ListaRedPesos[Selecao]].Valor;
 							printf("\nRedutor de Peso: %d", jogador.reducaoPeso);
 						}
@@ -895,8 +982,13 @@ int main()
 						{
 							if(gold >= RedutorPeso[ListaRedPesos[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= RedutorPeso[ListaRedPesos[Selecao]].Preco;
 								RedutorPeso[ListaRedPesos[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -907,16 +999,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
-					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					if(tecla == DOWN && Selecao < ListaInjecoesTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Injecao[ListaInjecoes[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.injecao = Injecao[ListaInjecoes[Selecao]].Valor;
 							printf("\nInjecao: %d", jogador.injecao);
 						}
@@ -924,8 +1019,13 @@ int main()
 						{
 							if(gold >= Injecao[ListaInjecoes[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= Injecao[ListaInjecoes[Selecao]].Preco;
 								Injecao[ListaInjecoes[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -936,16 +1036,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
-					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					if(tecla == DOWN && Selecao < ListaSuspensoresTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Suspensao[ListaSuspensores[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.suspensao = Suspensao[ListaSuspensores[Selecao]].Valor;
 							printf("\nSuspensao: %d", jogador.suspensao);
 						}
@@ -953,8 +1056,13 @@ int main()
 						{
 							if(gold >= Suspensao[ListaSuspensores[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= Suspensao[ListaSuspensores[Selecao]].Preco;
 								Suspensao[ListaSuspensores[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -965,16 +1073,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
-					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					if(tecla == DOWN && Selecao < ListaNitrosTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Nitro[ListaNitros[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.nitro = Nitro[ListaNitros[Selecao]].Valor;
 							printf("\nNitro: %d", jogador.nitro);
 						}
@@ -982,8 +1093,13 @@ int main()
 						{
 							if(gold >= Nitro[ListaNitros[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= Nitro[ListaNitros[Selecao]].Preco;
 								Nitro[ListaNitros[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -994,16 +1110,19 @@ int main()
 				{
 					if(tecla == UP && Selecao > 0)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao --;
 					}
-					if(tecla == DOWN && Selecao < ListaTurbosTamanho - 1)
+					if(tecla == DOWN && Selecao < ListaPneusTamanho - 1)
 					{
+						tocarSom(SOMSELECIONAR);
 						Selecao ++;
 					}
 					if(tecla == TECLAENTER)
 					{
 						if(Pneu[ListaPneus[Selecao]].Preco <= 0)
 						{
+							tocarSom(SOMEQUIPAR);
 							jogador.pneu = Pneu[ListaPneus[Selecao]].Valor;
 							printf("\nPneu: %d", jogador.pneu);
 						}
@@ -1011,8 +1130,13 @@ int main()
 						{
 							if(gold >= Pneu[ListaPneus[Selecao]].Preco)
 							{
+								tocarSom(SOMCOMPRA);
 								gold -= Pneu[ListaPneus[Selecao]].Preco;
 								Pneu[ListaPneus[Selecao]].Preco = 0;
+							}
+							else
+							{
+								tocarSom(SOMFALHA);
 							}
 						}
 					}
@@ -1023,10 +1147,26 @@ int main()
 				{
 					quantidadeDeCorridas ++;
 					
+					tocarSom(PARARMUSICA);
+					if(FaseAtual == 0)
+					{
+						tocarSom(MUSICACORRIDA1);
+					}
+					else if (FaseAtual == 1)
+					{
+						tocarSom(MUSICACORRIDA2);
+					}
+					else if (FaseAtual == 2)
+					{
+						tocarSom(MUSICACORRIDA3);
+					}
 					result = iniciarCorrida(jogador, oponente, Fase, R, F, tamX, tamY, FaseAtual);
+					tocarSom(PARARMUSICA);
+					tocarSom(MUSICAMENU);
 					
 					if(result == true)
 					{
+						tocarSom(SOMVITORIA);
 						gold += 100 + (100*FaseAtual) + (5*quantidadeDeCorridas);
 						
 						if(FaseAtual < 2)
@@ -1036,8 +1176,97 @@ int main()
 					}
 					else
 					{
+						tocarSom(SOMFALHA);
 						gold += (100 + (100*FaseAtual) + (5*quantidadeDeCorridas)) / 2;
 					}
+					
+					switch(quantidadeDeCorridas)
+					{
+						case 1:
+							ListaPneusTamanho ++;
+							ListaPneus = (int *)realloc(ListaPneus, sizeof(int) * ListaPneusTamanho);
+							ListaPneus[ListaPneusTamanho - 1] = PNEU2;
+							break;
+						
+						case 2:
+							ListaSuspensoresTamanho ++;
+							ListaSuspensores = (int *)realloc(ListaSuspensores, sizeof(int) * ListaSuspensoresTamanho);
+							ListaSuspensores[ListaSuspensoresTamanho - 1] = SUSPENSAO2;
+							break;
+						
+						case 3:
+							ListaInjecoesTamanho ++;
+							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
+							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO2;
+							break;
+						
+						case 4:
+							ListaNitrosTamanho ++;
+							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
+							ListaNitros[ListaNitrosTamanho - 1] = NITRO2;
+							break;
+						
+						case 5:
+							ListaRedPesosTamanho ++;
+							ListaRedPesos = (int *)realloc(ListaRedPesos, sizeof(int) * ListaRedPesosTamanho);
+							ListaRedPesos[ListaRedPesosTamanho - 1] = REDP2;
+							break;
+						
+						case 6:
+							ListaTurbosTamanho ++;
+							ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
+							ListaTurbos[ListaTurbosTamanho - 1] = TURBO2;
+							break;
+						
+						case 7:
+							ListaMotoresTamanho ++;
+							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
+							ListaMotores[ListaMotoresTamanho - 1] = MOTOR2;
+							break;
+						
+						case 8:
+							ListaPneusTamanho ++;
+							ListaPneus = (int *)realloc(ListaPneus, sizeof(int) * ListaPneusTamanho);
+							ListaPneus[ListaPneusTamanho - 1] = PNEU3;
+							break;
+						
+						case 9:
+							ListaSuspensoresTamanho ++;
+							ListaSuspensores = (int *)realloc(ListaSuspensores, sizeof(int) * ListaSuspensoresTamanho);
+							ListaSuspensores[ListaSuspensoresTamanho - 1] = SUSPENSAO3;
+							break;
+						
+						case 10:
+							ListaInjecoesTamanho ++;
+							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
+							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO3;
+							break;
+						
+						case 11:
+							ListaNitrosTamanho ++;
+							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
+							ListaNitros[ListaNitrosTamanho - 1] = NITRO3;
+							break;
+						
+						case 12:
+							ListaRedPesosTamanho ++;
+							ListaRedPesos = (int *)realloc(ListaRedPesos, sizeof(int) * ListaRedPesosTamanho);
+							ListaRedPesos[ListaRedPesosTamanho - 1] = REDP3;
+							break;
+						
+						case 13:
+							ListaTurbosTamanho ++;
+							ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
+							ListaTurbos[ListaTurbosTamanho - 1] = TURBO3;
+							break;
+						
+						case 14:
+							ListaMotoresTamanho ++;
+							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
+							ListaMotores[ListaMotoresTamanho - 1] = MOTOR3;
+							break;
+					}
+					
 					
 					comecarCorrida = false;
 				}
@@ -1063,5 +1292,79 @@ int main()
 	
 	closegraph();
 	return (0);
+}
+
+void tocarSom(int som)
+{
+	//Alterar o volume dos sons
+	if (som == VOL1)
+	{
+		waveOutSetVolume(0,0x01111111); //Volume no baixo
+	}
+    else if (som == VOL2)
+    {
+    	waveOutSetVolume(0,0x88888888); //Volume no médio
+	}
+    else if (som == VOL3)
+    {
+    	waveOutSetVolume(0,0xFFFFFFFF); //Volume no maximo
+	}
 	
+	//Reproduzir sons de fundo
+	else if (som == PARARMUSICA)
+	{
+		mciSendString("close musica", NULL, 0, 0);    //Para a reprodução do alias musica
+	}
+	else if (som == MUSICAMENU)
+	{
+		mciSendString("open .\\Sons\\menu.mp3 type MPEGVideo alias musica", NULL, 0, 0);
+      	mciSendString("play musica repeat", NULL, 0, 0);
+	}
+	else if (som == MUSICACORRIDA1)
+	{
+		mciSendString("open .\\Sons\\fall-out-boy-sunshine-riptide-feat-burna-boy-instrumental.mp3 type MPEGVideo alias musica", NULL, 0, 0);
+      	mciSendString("play musica repeat", NULL, 0, 0);
+	}
+	else if (som == MUSICACORRIDA2)
+	{
+		mciSendString("open .\\Sons\\the-white-stripes-seven-nation-army.mp3 type MPEGVideo alias musica", NULL, 0, 0); 
+      	mciSendString("play musica repeat", NULL, 0, 0);
+	}
+	else if (som == MUSICACORRIDA3)
+	{
+		mciSendString("open .\\Sons\\travis-scott-highest-in-the-room-instrumental.mp3 type MPEGVideo alias musica", NULL, 0, 0);
+      	mciSendString("play musica repeat", NULL, 0, 0);
+	}
+	
+	//Reproduzir efeitos sonoros
+	else if (som == PARAREFEITOSONORO)
+	{
+		//sndPlaySound(NULL, NULL); // Interrompe o som wav
+	}
+	else if(som == SOMVITORIA)
+	{
+		sndPlaySound(".\\Sons\\win.wav", SND_ASYNC);
+	}
+    else if (som == SOMSELECIONAR)
+    {
+    	//Exemplo de som em looping infinito.
+    	//sndPlaySound(".\\sons\\barracks.wav", SND_ASYNC + SND_LOOP);
+    	sndPlaySound(".\\Sons\\select.wav", SND_ASYNC);
+	}
+	else if (som == SOMFALHA)
+    {
+    	sndPlaySound(".\\Sons\\fail.wav", SND_ASYNC);
+	}
+	else if (som == SOMCOMPRA)
+    {
+    	sndPlaySound(".\\Sons\\compra.wav", SND_ASYNC);
+	}
+	else if (som == SOMEQUIPAR)
+    {
+    	sndPlaySound(".\\Sons\\pneumatica.wav", SND_ASYNC);
+	}
+	else if (som == SOMNITRO)
+    {
+    	sndPlaySound(".\\Sons\\nitro.wav", SND_ASYNC);
+	}
 }
