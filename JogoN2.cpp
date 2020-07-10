@@ -77,13 +77,17 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	int pg = 1;
 	unsigned long long gt1, gt2;
 	int FPS = 60;
-	char tecla = 0;
+	
+	char tecla = 0,
+		 Texto[50],
+		 Texto2[50];
 	
 	//Turbo
 	int turboAceleracao = jogador.suspensao,
 		turboVelocidadeMax = jogador.turbo,
 		turboVelocidade = 0,
-		tempoTurbo = 0;
+		tempoTurbo = 0,
+		contador = 0;
 	
 	bool SpacePress = false,
 		 turboAcelerando = false;
@@ -91,7 +95,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	Fase[FaseAtual].pos = 0;
 	
 	jogador.pos = 0;
-	jogador.posX = 0;
+	jogador.posX = 30;
 	jogador.posY = 500;
 	jogador.tanque = jogador.nitro;
 	jogador.aceleracao = jogador.pneu;
@@ -109,7 +113,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	oponente.pneu=Fase[FaseAtual].pneu;
 	
 	oponente.pos =0;
-	oponente.posX = 0;
+	oponente.posX = 30;
 	oponente.posY = 400;
 	oponente.tanque = oponente.nitro;
 	oponente.aceleracao = oponente.pneu;
@@ -119,6 +123,107 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	oponente.velocidadeMax += (oponente.velocidadeMax * (oponente.reducaoPeso/10));
 	
 	gt1 = GetTickCount();
+	
+	contador = 0;
+	while (contador < 120)
+	{
+		gt2 = GetTickCount();
+		if (gt2 - gt1 > 1000/FPS)
+		{
+			gt1 = gt2;
+			
+			if(pg == 1) pg = 2; else pg = 1;
+			setactivepage(pg);
+			setbkcolor(RGB(0,0,0));
+			cleardevice();
+					
+			//Desenhar a fase
+			if(Fase[FaseAtual].mapa==CIDADE)
+			{
+				putimage(Fase[FaseAtual].pos, 0, F[0], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[0], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[1], COPY_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==PRAIA)
+			{
+				putimage(Fase[FaseAtual].pos, 0, F[2], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[2], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[3], COPY_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==GRANDPRIX)
+			{
+				putimage(Fase[FaseAtual].pos, 0, F[4], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[4], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[5], COPY_PUT);
+			}
+			
+			
+			//Carros
+			setfillstyle(1,RGB(255,0,0));
+			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
+			
+			setfillstyle(1,RGB(0,255,0));
+			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
+			
+			//HUD
+			setbkcolor(RGB(255, 255, 255));
+			setcolor(RGB(0, 0, 0));
+			setlinestyle(0, 0, 1);
+			
+			strcpy(Texto, "Posicao: ");
+			if(jogador.pos > oponente.pos)
+			{
+				itoa(1, Texto2, 10);
+			}
+			else
+			{
+				itoa(2, Texto2, 10);
+			}
+			strcat(Texto, Texto2);
+			strcat(Texto, "°");
+			outtextxy(15, 20, Texto);
+			
+			strcpy(Texto, "Velocidade: ");
+			itoa((jogador.velocidade + turboVelocidade), Texto2, 10);
+			strcat(Texto, Texto2);
+			outtextxy(15, 550, Texto);
+			
+			strcpy(Texto, "Nitro: ");
+			itoa(jogador.tanque, Texto2, 10);
+			strcat(Texto, Texto2);
+			strcat(Texto, " L.");
+			outtextxy(15, 570, Texto);
+			
+			//Contagem
+			
+			if(contador < 30)
+			{
+				//Nada
+			}
+			else if(contador < 60)
+			{
+				strcpy(Texto, "3");
+				outtextxy(495, 295, Texto);
+			}
+			else if(contador < 90)
+			{
+				strcpy(Texto, "2");
+				outtextxy(495, 295, Texto);
+			}
+			else if(contador < 120)
+			{
+				strcpy(Texto, "1");
+				outtextxy(495, 295, Texto);
+			}
+			
+			contador ++;
+			
+			//Deixa a pagina visivel
+			setvisualpage(pg);
+		}
+	}
 	
 	while (jogador.posX < 870)
 	{
@@ -155,12 +260,49 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			}
 			
 			
-			
+			//Carros
 			setfillstyle(1,RGB(255,0,0));
 			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
 			
 			setfillstyle(1,RGB(0,255,0));
 			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
+			
+			//HUD
+			setbkcolor(RGB(255, 255, 255));
+			setcolor(RGB(0, 0, 0));
+			setlinestyle(0, 0, 1);
+			
+			strcpy(Texto, "Posicao: ");
+			if(jogador.pos > oponente.pos)
+			{
+				itoa(1, Texto2, 10);
+			}
+			else
+			{
+				itoa(2, Texto2, 10);
+			}
+			strcat(Texto, Texto2);
+			strcat(Texto, "°");
+			outtextxy(15, 20, Texto);
+			
+			strcpy(Texto, "Velocidade: ");
+			itoa((jogador.velocidade + turboVelocidade), Texto2, 10);
+			strcat(Texto, Texto2);
+			outtextxy(15, 550, Texto);
+			
+			strcpy(Texto, "Nitro: ");
+			itoa(jogador.tanque, Texto2, 10);
+			strcat(Texto, Texto2);
+			strcat(Texto, " L.");
+			outtextxy(15, 570, Texto);
+			
+			if(contador < 150)
+			{
+				strcpy(Texto, "Ja!");
+				outtextxy(495, 295, Texto);
+				
+				contador ++;
+			}
 			
 			//Deixa a pagina visivel
 			setvisualpage(pg);
@@ -289,12 +431,108 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	}
 	
 	if (jogador.pos > oponente.pos)
-	{ //Ganhou
+	{
+		//Ganhou
+		tocarSom(SOMVITORIA);
 		resultado = true;
 	}
 	else
-	{ //Perdeu
+	{
+		//Perdeu
+		tocarSom(SOMFALHA);
 		resultado = false;
+	}
+	
+	contador = 0;
+	while (contador < 30)
+	{
+		gt2 = GetTickCount();
+		if (gt2 - gt1 > 1000/FPS)
+		{
+			gt1 = gt2;
+			
+			if(pg == 1) pg = 2; else pg = 1;
+			setactivepage(pg);
+			setbkcolor(RGB(0,0,0));
+			cleardevice();
+					
+			//Desenhar a fase
+			if(Fase[FaseAtual].mapa==CIDADE)
+			{
+				putimage(Fase[FaseAtual].pos, 0, F[0], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[0], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[1], COPY_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==PRAIA)
+			{
+				putimage(Fase[FaseAtual].pos, 0, F[2], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[2], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[3], COPY_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==GRANDPRIX)
+			{
+				putimage(Fase[FaseAtual].pos, 0, F[4], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+tamX, 0, F[4], COPY_PUT);
+				putimage(Fase[FaseAtual].pos+(tamX*2), 0, F[5], COPY_PUT);
+			}
+			
+			
+			//Carros
+			setfillstyle(1,RGB(255,0,0));
+			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
+			
+			setfillstyle(1,RGB(0,255,0));
+			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
+			
+			//HUD
+			setbkcolor(RGB(255, 255, 255));
+			setcolor(RGB(0, 0, 0));
+			setlinestyle(0, 0, 1);
+			
+			strcpy(Texto, "Posicao: ");
+			if(jogador.pos > oponente.pos)
+			{
+				itoa(1, Texto2, 10);
+			}
+			else
+			{
+				itoa(2, Texto2, 10);
+			}
+			strcat(Texto, Texto2);
+			strcat(Texto, "°");
+			outtextxy(15, 20, Texto);
+			
+			strcpy(Texto, "Velocidade: ");
+			itoa((jogador.velocidade + turboVelocidade), Texto2, 10);
+			strcat(Texto, Texto2);
+			outtextxy(15, 550, Texto);
+			
+			strcpy(Texto, "Nitro: ");
+			itoa(jogador.tanque, Texto2, 10);
+			strcat(Texto, Texto2);
+			strcat(Texto, " L.");
+			outtextxy(15, 570, Texto);
+			
+			//Contagem
+			
+			if(resultado == true)
+			{
+				strcpy(Texto, "Voce venceu!");
+				outtextxy(475, 295, Texto);
+			}
+			else
+			{
+				strcpy(Texto, "Voce perdeu!");
+				outtextxy(475, 295, Texto);
+			}
+			
+			contador ++;
+			
+			//Deixa a pagina visivel
+			setvisualpage(pg);
+		}
 	}
 
 	return(resultado);
@@ -614,7 +852,6 @@ int main()
 	F[4] = malloc(tamImagem);
 	F[5] = malloc(tamImagem);
 	
-	
 	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[0]);
 	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
@@ -629,8 +866,6 @@ int main()
 	getimage(0, 0, 1000 - 1, 600 - 1, F[4]);
 	readimagefile("Sprites/FundoFase3Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[5]);
-	
-	
 	
 	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
@@ -678,13 +913,59 @@ int main()
 				strcpy(Texto, "Dinheiro: R$ ");
 				itoa(gold, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(700, 20, Texto);
+				outtextxy(840, 20, Texto);
+				
+				strcpy(Texto, "Motor: ");
+				itoa(jogador.motor, Texto2, 10);
+				strcat(Texto, Texto2);
+				outtextxy(840, 40, Texto);
+				
+				strcpy(Texto, "Reducao de Peso: ");
+				itoa(jogador.reducaoPeso, Texto2, 10);
+				strcat(Texto, Texto2);
+				strcat(Texto, "0%");
+				outtextxy(840, 60, Texto);
+				
+				strcpy(Texto, "Injecao: ");
+				itoa(jogador.injecao, Texto2, 10);
+				strcat(Texto, Texto2);
+				outtextxy(840, 80, Texto);
+				
+				strcpy(Texto, "Pneu: ");
+				itoa(jogador.pneu, Texto2, 10);
+				strcat(Texto, Texto2);
+				outtextxy(840, 100, Texto);
+				
+				strcpy(Texto, "Suspensao: ");
+				itoa(jogador.suspensao, Texto2, 10);
+				strcat(Texto, Texto2);
+				outtextxy(840, 120, Texto);
+				
+				strcpy(Texto, "Turbo: ");
+				itoa(jogador.turbo, Texto2, 10);
+				strcat(Texto, Texto2);
+				outtextxy(840, 140, Texto);
+				
+				strcpy(Texto, "Nitro: ");
+				itoa(jogador.nitro, Texto2, 10);
+				strcat(Texto, Texto2);
+				strcat(Texto, " L.");
+				outtextxy(840, 160, Texto);
+				
+				strcpy(Texto, "Aperte I para");
+				strcpy(Texto2, "iniciar uma corrida");
+				outtextxy(820, 540, Texto);
+				outtextxy(800, 560, Texto2);
 				
 				if(menuAtual2 == MENUMOTOR)
 				{
 					setbkcolor(RGB(237, 28, 36));
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
+					
+					
+					strcpy(Texto, "Motor");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
 					
 					for(i = 0; i < ListaMotoresTamanho; i++)
 					{
@@ -719,6 +1000,9 @@ int main()
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					strcpy(Texto, "Turbo");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					
 					for(i = 0; i < ListaTurbosTamanho; i++)
 					{
 						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
@@ -751,6 +1035,9 @@ int main()
 					setbkcolor(RGB(237, 28, 36));
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
+					
+					strcpy(Texto, "Reducao de Peso");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
 					
 					for(i = 0; i < ListaRedPesosTamanho; i++)
 					{
@@ -785,6 +1072,9 @@ int main()
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					strcpy(Texto, "Injecao");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					
 					for(i = 0; i < ListaInjecoesTamanho; i++)
 					{
 						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
@@ -817,6 +1107,9 @@ int main()
 					setbkcolor(RGB(237, 28, 36));
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
+					
+					strcpy(Texto, "Suspensao");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
 					
 					for(i = 0; i < ListaSuspensoresTamanho; i++)
 					{
@@ -851,6 +1144,9 @@ int main()
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					strcpy(Texto, "Nitro");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					
 					for(i = 0; i < ListaNitrosTamanho; i++)
 					{
 						putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * i), R[2], COPY_PUT);
@@ -883,6 +1179,9 @@ int main()
 					setbkcolor(RGB(237, 28, 36));
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
+					
+					strcpy(Texto, "Pneu");
+					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
 					
 					for(i = 0; i < ListaPneusTamanho; i++)
 					{
@@ -963,7 +1262,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.motor = Motor[ListaMotores[Selecao]].Valor;
-							printf("\nMotor: %d", jogador.motor);
+							//printf("\nMotor: %d", jogador.motor);
 						}
 						else
 						{
@@ -1000,7 +1299,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.turbo = Turbo[ListaTurbos[Selecao]].Valor;
-							printf("\nTurbo: %d", jogador.turbo);
+							//printf("\nTurbo: %d", jogador.turbo);
 						}
 						else
 						{
@@ -1037,7 +1336,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.reducaoPeso = RedutorPeso[ListaRedPesos[Selecao]].Valor;
-							printf("\nRedutor de Peso: %d", jogador.reducaoPeso);
+							//printf("\nRedutor de Peso: %d", jogador.reducaoPeso);
 						}
 						else
 						{
@@ -1074,7 +1373,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.injecao = Injecao[ListaInjecoes[Selecao]].Valor;
-							printf("\nInjecao: %d", jogador.injecao);
+							//printf("\nInjecao: %d", jogador.injecao);
 						}
 						else
 						{
@@ -1111,7 +1410,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.suspensao = Suspensao[ListaSuspensores[Selecao]].Valor;
-							printf("\nSuspensao: %d", jogador.suspensao);
+							//printf("\nSuspensao: %d", jogador.suspensao);
 						}
 						else
 						{
@@ -1148,7 +1447,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.nitro = Nitro[ListaNitros[Selecao]].Valor;
-							printf("\nNitro: %d", jogador.nitro);
+							//printf("\nNitro: %d", jogador.nitro);
 						}
 						else
 						{
@@ -1185,7 +1484,7 @@ int main()
 						{
 							tocarSom(SOMEQUIPAR);
 							jogador.pneu = Pneu[ListaPneus[Selecao]].Valor;
-							printf("\nPneu: %d", jogador.pneu);
+							//printf("\nPneu: %d", jogador.pneu);
 						}
 						else
 						{
@@ -1227,7 +1526,6 @@ int main()
 					
 					if(result == true)
 					{
-						tocarSom(SOMVITORIA);
 						gold += 50 + (100*FaseAtual) + (5*quantidadeDeCorridas);
 						
 						if(FaseAtual < 8)
@@ -1237,7 +1535,6 @@ int main()
 					}
 					else
 					{
-						tocarSom(SOMFALHA);
 						gold += (50 + (100*FaseAtual) + (5*quantidadeDeCorridas)) / 2;
 					}
 					
