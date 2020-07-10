@@ -25,7 +25,7 @@ enum Suspencao {SUSPENSAO1, SUSPENSAO2, SUSPENSAO3};
 enum Nitro {NITRO1, NITRO2, NITRO3};
 enum Pneu {PNEU1, PNEU2, PNEU3};
 
-enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENUPRINCIPAL, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO, SOMLARGADA};
+enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENUPRINCIPAL, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, MUSICAFIMDEJOGO, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO, SOMLARGADA};
 
 struct StructFase
 {
@@ -185,11 +185,11 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			putimage(jogador.posX, jogador.posY, Carros[0], OR_PUT);
 			
 			//HUD
-			setbkcolor(RGB(255, 255, 255));
+			setbkcolor(RGB(194, 228, 228));
 			setcolor(RGB(0, 0, 0));
 			setlinestyle(0, 0, 1);
 			
-			//putimage(10, 500, R[4], COPY_PUT);
+			putimage(10, 10, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Posicao: ");
 			if(jogador.pos > oponente.pos)
@@ -202,7 +202,9 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			}
 			strcat(Texto, Texto2);
 			strcat(Texto, "°");
-			outtextxy(15, 20, Texto);
+			outtextxy(35, 23, Texto);
+			
+			putimage(10, 545, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Velocidade: ");
 			itoa((jogador.velocidade + turboVelocidade), Texto2, 10);
@@ -227,16 +229,19 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 				{
 					tocarSom(SOMLARGADA);
 				}
+				putimage(435, 280, R[4], COPY_PUT);
 				strcpy(Texto, "3");
 				outtextxy(495, 295, Texto);
 			}
 			else if(contador < 90)
 			{
+				putimage(435, 280, R[4], COPY_PUT);
 				strcpy(Texto, "2");
 				outtextxy(495, 295, Texto);
 			}
 			else if(contador < 120)
 			{
+				putimage(435, 280, R[4], COPY_PUT);
 				strcpy(Texto, "1");
 				outtextxy(495, 295, Texto);
 			}
@@ -308,9 +313,11 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			putimage(jogador.posX, jogador.posY, Carros[0], OR_PUT);
 			
 			//HUD
-			setbkcolor(RGB(255, 255, 255));
+			setbkcolor(RGB(194, 228, 228));
 			setcolor(RGB(0, 0, 0));
 			setlinestyle(0, 0, 1);
+			
+			putimage(10, 10, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Posicao: ");
 			if(jogador.pos > oponente.pos)
@@ -323,7 +330,9 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			}
 			strcat(Texto, Texto2);
 			strcat(Texto, "°");
-			outtextxy(15, 20, Texto);
+			outtextxy(35, 23, Texto);
+			
+			putimage(10, 545, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Velocidade: ");
 			itoa((jogador.velocidade + turboVelocidade), Texto2, 10);
@@ -338,6 +347,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			
 			if(contador < 150)
 			{
+				putimage(435, 280, R[4], COPY_PUT);
 				strcpy(Texto, "Ja!");
 				outtextxy(495, 295, Texto);
 				
@@ -544,9 +554,11 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			putimage(jogador.posX, jogador.posY, Carros[0], OR_PUT);
 			
 			//HUD
-			setbkcolor(RGB(255, 255, 255));
+			setbkcolor(RGB(194, 228, 228));
 			setcolor(RGB(0, 0, 0));
 			setlinestyle(0, 0, 1);
+			
+			putimage(10, 10, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Posicao: ");
 			if(jogador.pos > oponente.pos)
@@ -559,7 +571,9 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			}
 			strcat(Texto, Texto2);
 			strcat(Texto, "°");
-			outtextxy(15, 20, Texto);
+			outtextxy(35, 23, Texto);
+			
+			putimage(10, 545, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Velocidade: ");
 			itoa((jogador.velocidade + turboVelocidade), Texto2, 10);
@@ -576,11 +590,13 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			
 			if(resultado == true)
 			{
+				putimage(445, 280, R[4], COPY_PUT);
 				strcpy(Texto, "Voce venceu!");
 				outtextxy(475, 295, Texto);
 			}
 			else
 			{
+				putimage(445, 280, R[4], COPY_PUT);
 				strcpy(Texto, "Voce perdeu!");
 				outtextxy(475, 295, Texto);
 			}
@@ -900,7 +916,7 @@ int main()
 	setactivepage(1);
 	
 	void *F[6];
-	void *R[6];
+	void *R[7];
 	void *Carros[4];
 	void *CarrosMascara[4];
 	
@@ -972,6 +988,7 @@ int main()
 	R[3] = malloc(tamImagem);
 	R[4] = malloc(imagesize(0, 0, 140 - 1, 45 - 1));
 	R[5] = malloc(imagesize(0, 0, 170 - 1, 175 - 1));
+	R[6] = malloc(tamImagem);
 	
 	readimagefile("Sprites/PaginaPrincipal.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
@@ -990,6 +1007,9 @@ int main()
 	
 	readimagefile("Sprites/menuCustomizacao4.bmp", 0, 0, 170 - 1, 175 - 1);
 	getimage(0, 0, 170 - 1, 175 - 1, R[5]);
+	
+	readimagefile("Sprites/ImagemFim.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[6]);
 	
 	menuAtual = MENUPRINCIPAL;
 	tocarSom(VOL2);
@@ -1797,6 +1817,7 @@ int main()
 		}
 		
 		tocarSom(PARARMUSICA);
+		tocarSom(MUSICAFIMDEJOGO);
 		while(tecla != ESC && SairDoJogo == false)
 		{
 			gt2 = GetTickCount();
@@ -1811,12 +1832,7 @@ int main()
 				cleardevice();
 				
 				//Desenhos
-				setbkcolor(RGB(255, 255, 255));
-				setcolor(RGB(0, 0, 0));
-				setlinestyle(0, 0, 1);
-				
-				strcpy(Texto, "Fim do jogo!");
-				outtextxy(475, 295, Texto);
+				putimage(0, 0, R[6], COPY_PUT);
 				
 				//Deixa a pagina visivel
 				setvisualpage(pg);
@@ -1839,6 +1855,8 @@ int main()
 			}
 		}
 	}
+	
+	tocarSom(PARARMUSICA);
 	
 	free(ListaMotores);
 	free(ListaTurbos);
@@ -1897,6 +1915,11 @@ void tocarSom(int som)
 	{
 		mciSendString("open .\\Sons\\travis-scott-highest-in-the-room-instrumental.mp3 type MPEGVideo alias musica", NULL, 0, 0);
       	mciSendString("play musica repeat", NULL, 0, 0);
+	}
+	else if (som == MUSICAFIMDEJOGO)
+	{
+		mciSendString("open .\\Sons\\ff6_victory_fanfare.mp3 type MPEGVideo alias musica", NULL, 0, 0);
+      	mciSendString("play musica", NULL, 0, 0);
 	}
 	
 	//Reproduzir efeitos sonoros
