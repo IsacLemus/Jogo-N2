@@ -389,7 +389,7 @@ int main()
 	Fase[7].pos = 0,
 	Fase[7].comprimento = 55000;
 	Fase[7].motor = 4;
-	Fase[7].reducaoPeso = 3;
+	Fase[7].reducaoPeso = 5;
 	Fase[7].injecao = 3;
 	Fase[7].suspensao = 5;
 	Fase[7].nitro = 1500;
@@ -399,7 +399,7 @@ int main()
 	Fase[8].pos = 0,
 	Fase[8].comprimento = 60000;
 	Fase[8].motor = 4;
-	Fase[8].reducaoPeso = 5;
+	Fase[8].reducaoPeso = 10;
 	Fase[8].injecao = 3;
 	Fase[8].suspensao = 5;
 	Fase[8].nitro = 1500;
@@ -1228,7 +1228,7 @@ int main()
 					if(result == true)
 					{
 						tocarSom(SOMVITORIA);
-						gold += 100 + (100*FaseAtual) + (5*quantidadeDeCorridas);
+						gold += 50 + (100*FaseAtual) + (5*quantidadeDeCorridas);
 						
 						if(FaseAtual < 8)
 						{
@@ -1238,7 +1238,7 @@ int main()
 					else
 					{
 						tocarSom(SOMFALHA);
-						gold += (100 + (100*FaseAtual) + (5*quantidadeDeCorridas)) / 2;
+						gold += (50 + (100*FaseAtual) + (5*quantidadeDeCorridas)) / 2;
 					}
 					
 					switch(quantidadeDeCorridas)
@@ -1247,81 +1247,73 @@ int main()
 							ListaPneusTamanho ++;
 							ListaPneus = (int *)realloc(ListaPneus, sizeof(int) * ListaPneusTamanho);
 							ListaPneus[ListaPneusTamanho - 1] = PNEU2;
-							break;
-						
-						case 2:
+							
 							ListaSuspensoresTamanho ++;
 							ListaSuspensores = (int *)realloc(ListaSuspensores, sizeof(int) * ListaSuspensoresTamanho);
 							ListaSuspensores[ListaSuspensoresTamanho - 1] = SUSPENSAO2;
+							
 							break;
 						
-						case 3:
+						case 2:
 							ListaMotoresTamanho ++;
 							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
 							ListaMotores[ListaMotoresTamanho - 1] = MOTOR2;
-							break;
-						
-						case 4:
+							
 							ListaInjecoesTamanho ++;
 							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
 							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO2;
+							
 							break;
 						
-						case 5:
+						case 3:
 							ListaRedPesosTamanho ++;
 							ListaRedPesos = (int *)realloc(ListaRedPesos, sizeof(int) * ListaRedPesosTamanho);
 							ListaRedPesos[ListaRedPesosTamanho - 1] = REDP2;
-							break;
-						
-						case 6:
+							
 							ListaTurbosTamanho ++;
 							ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
 							ListaTurbos[ListaTurbosTamanho - 1] = TURBO2;
+							
 							break;
 						
-						case 7:
+						case 4:
 							ListaNitrosTamanho ++;
 							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
 							ListaNitros[ListaNitrosTamanho - 1] = NITRO2;
-							break;
-						
-						case 8:
+							
 							ListaMotoresTamanho ++;
 							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
 							ListaMotores[ListaMotoresTamanho - 1] = MOTOR3;
+							
 							break;
 						
-						case 9:
+						case 5:
 							ListaSuspensoresTamanho ++;
 							ListaSuspensores = (int *)realloc(ListaSuspensores, sizeof(int) * ListaSuspensoresTamanho);
 							ListaSuspensores[ListaSuspensoresTamanho - 1] = SUSPENSAO3;
-							break;
-						
-						case 10:
+							
 							ListaInjecoesTamanho ++;
 							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
 							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO3;
+							
 							break;
 						
-						case 11:
+						case 6:
 							ListaNitrosTamanho ++;
 							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
 							ListaNitros[ListaNitrosTamanho - 1] = NITRO3;
-							break;
-						
-						case 12:
+							
 							ListaRedPesosTamanho ++;
 							ListaRedPesos = (int *)realloc(ListaRedPesos, sizeof(int) * ListaRedPesosTamanho);
 							ListaRedPesos[ListaRedPesosTamanho - 1] = REDP3;
+							
 							break;
 						
-						case 13:
+						case 7:
 							ListaPneusTamanho ++;
 							ListaPneus = (int *)realloc(ListaPneus, sizeof(int) * ListaPneusTamanho);
 							ListaPneus[ListaPneusTamanho - 1] = PNEU3;
-							break;
-						
-						case 14:
+							
 							ListaTurbosTamanho ++;
 							ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
 							ListaTurbos[ListaTurbosTamanho - 1] = TURBO3;
