@@ -25,7 +25,7 @@ enum Suspencao {SUSPENSAO1, SUSPENSAO2, SUSPENSAO3};
 enum Nitro {NITRO1, NITRO2, NITRO3};
 enum Pneu {PNEU1, PNEU2, PNEU3};
 
-enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO, SOMLARGADA};
+enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENUPRINCIPAL, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO, SOMLARGADA};
 
 struct StructFase
 {
@@ -70,7 +70,7 @@ struct StructPecas
 
 void tocarSom(int som);
 
-bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], void *F[], int tamX, int tamY, int FaseAtual)
+bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[], void *R[], void *F[], void *Carros[], void *CarrosMascara[], int tamX, int tamY, int FaseAtual)
 {
 	bool resultado;
 	
@@ -113,8 +113,8 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	oponente.pneu=Fase[FaseAtual].pneu;
 	
 	oponente.pos =0;
-	oponente.posX = 30;
-	oponente.posY = 400;
+	oponente.posX = 25;
+	oponente.posY = 405;
 	oponente.tanque = oponente.nitro;
 	oponente.aceleracao = oponente.pneu;
 	oponente.aceleracao += oponente.injecao;
@@ -161,16 +161,35 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			
 			
 			//Carros
-			setfillstyle(1,RGB(255,0,0));
-			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
+			//Oponentes
+			if(Fase[FaseAtual].mapa==CIDADE)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[1], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[1], OR_PUT);
+			}
 			
-			setfillstyle(1,RGB(0,255,0));
-			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
+			if(Fase[FaseAtual].mapa==PRAIA)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[2], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[2], OR_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==GRANDPRIX)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[3], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[3], OR_PUT);
+			}
+			
+			//Jogador
+			putimage(jogador.posX, jogador.posY, CarrosMascara[0], AND_PUT);
+			putimage(jogador.posX, jogador.posY, Carros[0], OR_PUT);
 			
 			//HUD
 			setbkcolor(RGB(255, 255, 255));
 			setcolor(RGB(0, 0, 0));
 			setlinestyle(0, 0, 1);
+			
+			//putimage(10, 500, R[4], COPY_PUT);
 			
 			strcpy(Texto, "Posicao: ");
 			if(jogador.pos > oponente.pos)
@@ -265,11 +284,28 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			
 			
 			//Carros
-			setfillstyle(1,RGB(255,0,0));
-			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
+			//Oponentes
+			if(Fase[FaseAtual].mapa==CIDADE)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[1], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[1], OR_PUT);
+			}
 			
-			setfillstyle(1,RGB(0,255,0));
-			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
+			if(Fase[FaseAtual].mapa==PRAIA)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[2], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[2], OR_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==GRANDPRIX)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[3], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[3], OR_PUT);
+			}
+			
+			//Jogador
+			putimage(jogador.posX, jogador.posY, CarrosMascara[0], AND_PUT);
+			putimage(jogador.posX, jogador.posY, Carros[0], OR_PUT);
 			
 			//HUD
 			setbkcolor(RGB(255, 255, 255));
@@ -484,11 +520,28 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			
 			
 			//Carros
-			setfillstyle(1,RGB(255,0,0));
-			bar(oponente.posX, oponente.posY, oponente.posX+100, oponente.posY + 50);
+			//Oponentes
+			if(Fase[FaseAtual].mapa==CIDADE)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[1], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[1], OR_PUT);
+			}
 			
-			setfillstyle(1,RGB(0,255,0));
-			bar(jogador.posX, jogador.posY, jogador.posX+100, jogador.posY + 50);
+			if(Fase[FaseAtual].mapa==PRAIA)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[2], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[2], OR_PUT);
+			}
+			
+			if(Fase[FaseAtual].mapa==GRANDPRIX)
+			{
+				putimage(oponente.posX, oponente.posY, CarrosMascara[3], AND_PUT);
+				putimage(oponente.posX, oponente.posY, Carros[3], OR_PUT);
+			}
+			
+			//Jogador
+			putimage(jogador.posX, jogador.posY, CarrosMascara[0], AND_PUT);
+			putimage(jogador.posX, jogador.posY, Carros[0], OR_PUT);
 			
 			//HUD
 			setbkcolor(RGB(255, 255, 255));
@@ -543,11 +596,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 }
 
 int main()
-{	
-	//Imagens
-	void *F[6];
-	void *R[3]; // Teste
-	
+{
 	//Variaveis do jogo
 	int gold = 0,
 		FaseAtual = 0;
@@ -675,6 +724,8 @@ int main()
 	int Menu1PosX = 60,
 		Menu1PosY = 190,
 		Menu1PosYD = 45;
+	
+	int CorMenu = RGB(194, 228, 228);
 	
 	//Ponteiros --------------------------------------------------------------------
 	int ListaMotoresTamanho = 1,
@@ -845,10 +896,15 @@ int main()
 	//Iniciar a janela do jogo ----------------------------------------------------------------------------------------------
 	initwindow(tamX, tamY, "Click Tuning", 50, 50);
 	
+	//Imagens
+	setactivepage(1);
+	
+	void *F[6];
+	void *R[6];
+	void *Carros[4];
+	void *CarrosMascara[4];
+	
 	tamImagem = imagesize(0, 0, 1000 - 1, 600 - 1);
-	R[0] = malloc(tamImagem);
-	R[1] = malloc(tamImagem);
-	R[2] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
 	
 	//Imagens das fases
 	F[0] = malloc(tamImagem);
@@ -860,30 +916,84 @@ int main()
 	
 	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[0]);
+	
 	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[1]);
 	
 	readimagefile("Sprites/FundoFase2.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[2]);
+	
 	readimagefile("Sprites/FundoFase2Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[3]);
 	
 	readimagefile("Sprites/FundoFase3.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[4]);
+	
 	readimagefile("Sprites/FundoFase3Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
 	getimage(0, 0, 1000 - 1, 600 - 1, F[5]);
 	
-	readimagefile("Sprites/FundoTutorialeFase1.bmp", 0, 0, 1000 - 1, 600 - 1);
-	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
-	readimagefile("Sprites/FundoTutorialeFase1Chegada.bmp", 0, 0, 1000 - 1, 600 - 1);
-	getimage(0, 0, 1000 - 1, 600 - 1, R[1]);
+	//Imagens dos carros
+	Carros[0] = malloc(imagesize(0, 0, 100 - 1, 45 - 1));
+	CarrosMascara[0] = malloc(imagesize(0, 0, 100 - 1, 45 - 1));
 	
+	Carros[1] = malloc(imagesize(0, 0, 100 - 1, 55 - 1));
+	CarrosMascara[1] = malloc(imagesize(0, 0, 100 - 1, 55 - 1));
+	
+	Carros[2] = malloc(imagesize(0, 0, 100 - 1, 53 - 1));
+	CarrosMascara[2] = malloc(imagesize(0, 0, 100 - 1, 53 - 1));
+	
+	Carros[3] = malloc(imagesize(0, 0, 100 - 1, 55 - 1));
+	CarrosMascara[3] = malloc(imagesize(0, 0, 100 - 1, 55 - 1));
+	
+	readimagefile("Sprites/carro1.bmp", 0, 0, 100 - 1, 45 - 1);
+	getimage(0, 0, 100 - 1, 45 - 1, Carros[0]);
+	readimagefile("Sprites/carro1m.bmp", 0, 0, 100 - 1, 45 - 1);
+	getimage(0, 0, 100 - 1, 45 - 1, CarrosMascara[0]);
+	
+	readimagefile("Sprites/carro2.bmp", 0, 0, 100 - 1, 55 - 1);
+	getimage(0, 0, 100 - 1, 55 - 1, Carros[1]);
+	readimagefile("Sprites/carro2m.bmp", 0, 0, 100 - 1, 55 - 1);
+	getimage(0, 0, 100 - 1, 55 - 1, CarrosMascara[1]);
+	
+	readimagefile("Sprites/carro3.bmp", 0, 0, 100 - 1, 53 - 1);
+	getimage(0, 0, 100 - 1, 53 - 1, Carros[2]);
+	readimagefile("Sprites/carro3m.bmp", 0, 0, 100 - 1, 53 - 1);
+	getimage(0, 0, 100 - 1, 53 - 1, CarrosMascara[2]);
+	
+	readimagefile("Sprites/carro4.bmp", 0, 0, 100 - 1, 55 - 1);
+	getimage(0, 0, 100 - 1, 55 - 1, Carros[3]);
+	readimagefile("Sprites/carro4m.bmp", 0, 0, 100 - 1, 55 - 1);
+	getimage(0, 0, 100 - 1, 55 - 1, CarrosMascara[3]);
+	
+	//Imagens dos menus
+	R[0] = malloc(tamImagem);
+	R[1] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
+	R[2] = malloc(imagesize(0, 0, 335 - 1, 45 - 1));
+	R[3] = malloc(tamImagem);
+	R[4] = malloc(imagesize(0, 0, 140 - 1, 45 - 1));
+	R[5] = malloc(imagesize(0, 0, 170 - 1, 175 - 1));
+	
+	readimagefile("Sprites/PaginaPrincipal.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[0]);
+	
+	readimagefile("Sprites/menuCustomizacao2.bmp", 0, 0, 335 - 1, 45 - 1);
+	getimage(0, 0, 335 - 1, 45 - 1, R[1]);
 	
 	readimagefile("Sprites/menuCustomizacao1.bmp", 0, 0, 335 - 1, 45 - 1);
 	getimage(0, 0, 335 - 1, 45 - 1, R[2]);
 	
+	readimagefile("Sprites/Tunagem.bmp", 0, 0, 1000 - 1, 600 - 1);
+	getimage(0, 0, 1000 - 1, 600 - 1, R[3]);
+	
+	readimagefile("Sprites/menuCustomizacao3.bmp", 0, 0, 140 - 1, 45 - 1);
+	getimage(0, 0, 140 - 1, 45 - 1, R[4]);
+	
+	readimagefile("Sprites/menuCustomizacao4.bmp", 0, 0, 170 - 1, 175 - 1);
+	getimage(0, 0, 170 - 1, 175 - 1, R[5]);
+	
 	menuAtual = MENUPRINCIPAL;
 	tocarSom(VOL2);
+	tocarSom(MUSICAMENUPRINCIPAL);
 	while(tecla != ESC && SairDoJogo == false)
 	{
 		while(menuAtual == MENUPRINCIPAL && tecla != ESC && SairDoJogo == false)
@@ -900,6 +1010,7 @@ int main()
 				cleardevice();
 				
 				//Desenhos
+				putimage(0, 0, R[0], COPY_PUT);
 				
 				//Deixa a pagina visivel
 				setvisualpage(pg);
@@ -910,6 +1021,7 @@ int main()
 				//Menu de customizacao
 				if(tecla == TECLAENTER)
 				{
+					tocarSom(PARARMUSICA);
 					tocarSom(MUSICAMENU);
 					menuAtual = CUSTOMIZACAOCARRO;
 				}
@@ -940,69 +1052,75 @@ int main()
 				//Desenhos
 				
 				//Menu de customizacao
+				putimage(0, 0, R[3], COPY_PUT);
+				
 				//Desenhos do menu
 				
 				//Mostrar coisas do jogador
-				setbkcolor(RGB(237, 28, 36));
+				setbkcolor(CorMenu);
 				setcolor(RGB(0, 0, 0));
 				setlinestyle(0, 0, 1);
+				
+				putimage(728, 10, R[5], COPY_PUT);
 				
 				strcpy(Texto, "Dinheiro: R$ ");
 				itoa(gold, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(840, 20, Texto);
+				outtextxy(728 + 10, 20, Texto);
 				
 				strcpy(Texto, "Motor: ");
 				itoa(jogador.motor, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(840, 40, Texto);
+				outtextxy(728 + 10, 40, Texto);
 				
 				strcpy(Texto, "Reducao de Peso: ");
 				itoa(jogador.reducaoPeso, Texto2, 10);
 				strcat(Texto, Texto2);
 				strcat(Texto, "0%");
-				outtextxy(840, 60, Texto);
+				outtextxy(728 + 10, 60, Texto);
 				
 				strcpy(Texto, "Injecao: ");
 				itoa(jogador.injecao, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(840, 80, Texto);
+				outtextxy(728 + 10, 80, Texto);
 				
 				strcpy(Texto, "Pneu: ");
 				itoa(jogador.pneu, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(840, 100, Texto);
+				outtextxy(728 + 10, 100, Texto);
 				
 				strcpy(Texto, "Suspensao: ");
 				itoa(jogador.suspensao, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(840, 120, Texto);
+				outtextxy(728 + 10, 120, Texto);
 				
 				strcpy(Texto, "Turbo: ");
 				itoa(jogador.turbo, Texto2, 10);
 				strcat(Texto, Texto2);
-				outtextxy(840, 140, Texto);
+				outtextxy(728 + 10, 140, Texto);
 				
 				strcpy(Texto, "Nitro: ");
 				itoa(jogador.nitro, Texto2, 10);
 				strcat(Texto, Texto2);
 				strcat(Texto, " L.");
-				outtextxy(840, 160, Texto);
+				outtextxy(728 + 10, 160, Texto);
+				
+				putimage(145, 500, R[4], COPY_PUT);
 				
 				strcpy(Texto, "Aperte I para");
 				strcpy(Texto2, "iniciar uma corrida");
-				outtextxy(820, 540, Texto);
-				outtextxy(800, 560, Texto2);
+				outtextxy(145 + 30, 500 + 5, Texto);
+				outtextxy(145 + 10, 500 + 5 + 20, Texto2);
 				
 				if(menuAtual2 == MENUMOTOR)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
-					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Motor");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 150, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaMotoresTamanho; i++)
 					{
@@ -1033,12 +1151,13 @@ int main()
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUTURBO)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Turbo");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 150, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaTurbosTamanho; i++)
 					{
@@ -1069,12 +1188,13 @@ int main()
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUREDPESO)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Reducao de Peso");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 110, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaRedPesosTamanho; i++)
 					{
@@ -1105,12 +1225,13 @@ int main()
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUINJECAO)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Injecao");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 145, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaInjecoesTamanho; i++)
 					{
@@ -1141,12 +1262,13 @@ int main()
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUSUSPENSAO)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Suspensao");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 130, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaSuspensoresTamanho; i++)
 					{
@@ -1177,12 +1299,13 @@ int main()
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUNITRO)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Nitro");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 150, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaNitrosTamanho; i++)
 					{
@@ -1213,12 +1336,13 @@ int main()
 				//--------------------------------------------------------------------------------------------------------------------------
 				if(menuAtual2 == MENUPNEU)
 				{
-					setbkcolor(RGB(237, 28, 36));
+					setbkcolor(CorMenu);
 					setcolor(RGB(0, 0, 0));
 					setlinestyle(0, 0, 1);
 					
+					putimage(Menu1PosX, Menu1PosY + (Menu1PosYD * -1), R[1], COPY_PUT);
 					strcpy(Texto, "Pneu");
-					outtextxy(Menu1PosX + 10, Menu1PosY - 25, Texto);
+					outtextxy(Menu1PosX + 150, Menu1PosY - 30, Texto);
 					
 					for(i = 0; i < ListaPneusTamanho; i++)
 					{
@@ -1557,7 +1681,7 @@ int main()
 					{
 						tocarSom(MUSICACORRIDA3);
 					}
-					result = iniciarCorrida(jogador, oponente, Fase, R, F, tamX, tamY, FaseAtual);
+					result = iniciarCorrida(jogador, oponente, Fase, R, F, Carros, CarrosMascara, tamX, tamY, FaseAtual);
 					tocarSom(PARARMUSICA);
 					tocarSom(MUSICAMENU);
 					
@@ -1748,6 +1872,11 @@ void tocarSom(int som)
 	else if (som == PARARMUSICA)
 	{
 		mciSendString("close musica", NULL, 0, 0);    //Para a reprodução do alias musica
+	}
+	else if (som == MUSICAMENUPRINCIPAL)
+	{
+		mciSendString("open .\\Sons\\riders-on-the-storm-fredwreck-remix-nfs-underground-2-ost-hq.mp3 type MPEGVideo alias musica", NULL, 0, 0);
+      	mciSendString("play musica repeat", NULL, 0, 0);
 	}
 	else if (som == MUSICAMENU)
 	{
