@@ -115,12 +115,12 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 	oponente.aceleracao = oponente.pneu;
 	oponente.aceleracao += oponente.injecao;
 	oponente.velocidade = 0;
-	oponente.velocidadeMax = 26 * oponente.motor;
+	oponente.velocidadeMax = 28 * oponente.motor;
 	oponente.velocidadeMax += (oponente.velocidadeMax * (oponente.reducaoPeso/10));
 	
 	gt1 = GetTickCount();
 	
-	while (jogador.posX < 890)
+	while (jogador.posX < 870)
 	{
 		gt2 = GetTickCount();
 		if (gt2 - gt1 > 1000/FPS)
@@ -183,7 +183,7 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			if((GetKeyState(VK_SPACE)&0x80) && (SpacePress == false) && (jogador.tanque > 0))
 			{
 				tocarSom(SOMNITRO);
-				tempoTurbo = 120;
+				tempoTurbo = 60;
 				jogador.tanque -= 500;
 				turboAcelerando = true;
 			}
@@ -398,8 +398,8 @@ int main()
 	Fase[8].mapa = GRANDPRIX;
 	Fase[8].pos = 0,
 	Fase[8].comprimento = 60000;
-	Fase[8].motor = 5;
-	Fase[8].reducaoPeso = 3;
+	Fase[8].motor = 4;
+	Fase[8].reducaoPeso = 5;
 	Fase[8].injecao = 3;
 	Fase[8].suspensao = 5;
 	Fase[8].nitro = 1500;
@@ -486,11 +486,11 @@ int main()
 	Motor[MOTOR1].Preco = 0;
 	
 	strcpy(Motor[MOTOR2].Nome, "2.0 - 4 Cilindros Forjado");
-	Motor[MOTOR2].Valor = 3;
+	Motor[MOTOR2].Valor = 2;
 	Motor[MOTOR2].Preco = 300;
 	
 	strcpy(Motor[MOTOR3].Nome, "3.0 - 6 Cilindros em Linha 2JZ");
-	Motor[MOTOR3].Valor = 5;
+	Motor[MOTOR3].Valor = 3;
 	Motor[MOTOR3].Preco = 600;
 	
 	//Turbos
@@ -1256,15 +1256,15 @@ int main()
 							break;
 						
 						case 3:
-							ListaInjecoesTamanho ++;
-							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
-							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO2;
-							break;
-						
-						case 4:
 							ListaMotoresTamanho ++;
 							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
 							ListaMotores[ListaMotoresTamanho - 1] = MOTOR2;
+							break;
+						
+						case 4:
+							ListaInjecoesTamanho ++;
+							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
+							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO2;
 							break;
 						
 						case 5:
