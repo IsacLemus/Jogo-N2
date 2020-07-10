@@ -399,7 +399,7 @@ int main()
 	Fase[8].pos = 0,
 	Fase[8].comprimento = 60000;
 	Fase[8].motor = 4;
-	Fase[8].reducaoPeso = 10;
+	Fase[8].reducaoPeso = 9;
 	Fase[8].injecao = 3;
 	Fase[8].suspensao = 5;
 	Fase[8].nitro = 1500;
@@ -1281,9 +1281,9 @@ int main()
 							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
 							ListaNitros[ListaNitrosTamanho - 1] = NITRO2;
 							
-							ListaMotoresTamanho ++;
-							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
-							ListaMotores[ListaMotoresTamanho - 1] = MOTOR3;
+							ListaInjecoesTamanho ++;
+							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
+							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO3;
 							
 							break;
 						
@@ -1292,9 +1292,9 @@ int main()
 							ListaSuspensores = (int *)realloc(ListaSuspensores, sizeof(int) * ListaSuspensoresTamanho);
 							ListaSuspensores[ListaSuspensoresTamanho - 1] = SUSPENSAO3;
 							
-							ListaInjecoesTamanho ++;
-							ListaInjecoes = (int *)realloc(ListaInjecoes, sizeof(int) * ListaInjecoesTamanho);
-							ListaInjecoes[ListaInjecoesTamanho - 1] = INJECAO3;
+							ListaMotoresTamanho ++;
+							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
+							ListaMotores[ListaMotoresTamanho - 1] = MOTOR3;
 							
 							break;
 						
