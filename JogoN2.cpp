@@ -25,7 +25,7 @@ enum Suspencao {SUSPENSAO1, SUSPENSAO2, SUSPENSAO3};
 enum Nitro {NITRO1, NITRO2, NITRO3};
 enum Pneu {PNEU1, PNEU2, PNEU3};
 
-enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO};
+enum EfeitosSonorosNomes {VOL1, VOL2, VOL3, PARARMUSICA, MUSICAMENU, MUSICACORRIDA1, MUSICACORRIDA2, MUSICACORRIDA3, PARAREFEITOSONORO, SOMVITORIA, SOMSELECIONAR, SOMFALHA, SOMCOMPRA, SOMEQUIPAR, SOMNITRO, SOMLARGADA};
 
 struct StructFase
 {
@@ -204,6 +204,10 @@ bool iniciarCorrida(StructCarro jogador, StructCarro oponente, StructFase Fase[]
 			}
 			else if(contador < 60)
 			{
+				if(contador < 31)
+				{
+					tocarSom(SOMLARGADA);
+				}
 				strcpy(Texto, "3");
 				outtextxy(495, 295, Texto);
 			}
@@ -1796,5 +1800,9 @@ void tocarSom(int som)
 	else if (som == SOMNITRO)
     {
     	sndPlaySound(".\\Sons\\nitro.wav", SND_ASYNC);
+	}
+	else if (som == SOMLARGADA)
+    {
+    	sndPlaySound(".\\Sons\\321.wav", SND_ASYNC);
 	}
 }
