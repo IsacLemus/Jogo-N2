@@ -1209,15 +1209,15 @@ int main()
 					quantidadeDeCorridas ++;
 					
 					tocarSom(PARARMUSICA);
-					if(FaseAtual == 0)
+					if(Fase[FaseAtual].mapa == CIDADE)
 					{
 						tocarSom(MUSICACORRIDA1);
 					}
-					else if (FaseAtual == 1)
+					else if (Fase[FaseAtual].mapa == PRAIA)
 					{
 						tocarSom(MUSICACORRIDA2);
 					}
-					else if (FaseAtual == 2)
+					else if (Fase[FaseAtual].mapa == GRANDPRIX)
 					{
 						tocarSom(MUSICACORRIDA3);
 					}
@@ -1262,9 +1262,9 @@ int main()
 							break;
 						
 						case 4:
-							ListaNitrosTamanho ++;
-							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
-							ListaNitros[ListaNitrosTamanho - 1] = NITRO2;
+							ListaMotoresTamanho ++;
+							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
+							ListaMotores[ListaMotoresTamanho - 1] = MOTOR2;
 							break;
 						
 						case 5:
@@ -1280,15 +1280,15 @@ int main()
 							break;
 						
 						case 7:
-							ListaMotoresTamanho ++;
-							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
-							ListaMotores[ListaMotoresTamanho - 1] = MOTOR2;
+							ListaNitrosTamanho ++;
+							ListaNitros = (int *)realloc(ListaNitros, sizeof(int) * ListaNitrosTamanho);
+							ListaNitros[ListaNitrosTamanho - 1] = NITRO2;
 							break;
 						
 						case 8:
-							ListaPneusTamanho ++;
-							ListaPneus = (int *)realloc(ListaPneus, sizeof(int) * ListaPneusTamanho);
-							ListaPneus[ListaPneusTamanho - 1] = PNEU3;
+							ListaMotoresTamanho ++;
+							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
+							ListaMotores[ListaMotoresTamanho - 1] = MOTOR3;
 							break;
 						
 						case 9:
@@ -1316,15 +1316,15 @@ int main()
 							break;
 						
 						case 13:
-							ListaTurbosTamanho ++;
-							ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
-							ListaTurbos[ListaTurbosTamanho - 1] = TURBO3;
+							ListaPneusTamanho ++;
+							ListaPneus = (int *)realloc(ListaPneus, sizeof(int) * ListaPneusTamanho);
+							ListaPneus[ListaPneusTamanho - 1] = PNEU3;
 							break;
 						
 						case 14:
-							ListaMotoresTamanho ++;
-							ListaMotores = (int *)realloc(ListaMotores, sizeof(int) * ListaMotoresTamanho);
-							ListaMotores[ListaMotoresTamanho - 1] = MOTOR3;
+							ListaTurbosTamanho ++;
+							ListaTurbos = (int *)realloc(ListaTurbos, sizeof(int) * ListaTurbosTamanho);
+							ListaTurbos[ListaTurbosTamanho - 1] = TURBO3;
 							break;
 					}
 					
