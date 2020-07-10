@@ -664,7 +664,9 @@ int main()
 		menuAtual2 = 0;
 	
 	bool result = false,
-		 comecarCorrida = false;
+		 comecarCorrida = false,
+		 FimDeJogo = false,
+		 SairDoJogo = false;
 	
 	int Menu1PosX = 60,
 		Menu1PosY = 190,
@@ -877,17 +879,48 @@ int main()
 	getimage(0, 0, 335 - 1, 45 - 1, R[2]);
 	
 	menuAtual = MENUPRINCIPAL;
-	menuAtual = CUSTOMIZACAOCARRO;
 	tocarSom(VOL2);
-	tocarSom(MUSICAMENU);
-	while(tecla != ESC)
+	while(tecla != ESC && SairDoJogo == false)
 	{
-		while(menuAtual == MENUPRINCIPAL && tecla != ESC)
+		while(menuAtual == MENUPRINCIPAL && tecla != ESC && SairDoJogo == false)
 		{
-			//Alguma coisa
+			gt2 = GetTickCount();
+			if (gt2 - gt1 > 1000/FPS)
+			{
+				gt1 = gt2;
+				
+				if(pg == 1) pg = 2; else pg = 1;
+				
+				setactivepage(pg);
+				setbkcolor(RGB(230, 230, 230));
+				cleardevice();
+				
+				//Desenhos
+				
+				//Deixa a pagina visivel
+				setvisualpage(pg);
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				
+				//Acoes
+				//Menu de customizacao
+				if(tecla == TECLAENTER)
+				{
+					tocarSom(MUSICAMENU);
+					menuAtual = CUSTOMIZACAOCARRO;
+				}
+				
+				tecla = 0;
+				fflush(stdin);
+				if (kbhit())
+				{
+					tecla = getch ();
+					//printf("\n%d", tecla);
+				}
+			}
 		}
 		
-		while(menuAtual == CUSTOMIZACAOCARRO && tecla != ESC)
+		while(menuAtual == CUSTOMIZACAOCARRO && tecla != ESC && FimDeJogo == false && SairDoJogo == false)
 		{
 			gt2 = GetTickCount();
 			if (gt2 - gt1 > 1000/FPS)
@@ -1532,6 +1565,10 @@ int main()
 						{
 							FaseAtual ++;
 						}
+						else
+						{
+							FimDeJogo = true;
+						}
 					}
 					else
 					{
@@ -1619,6 +1656,49 @@ int main()
 					
 					
 					comecarCorrida = false;
+				}
+				
+				tecla = 0;
+				fflush(stdin);
+				if (kbhit())
+				{
+					tecla = getch ();
+					//printf("\n%d", tecla);
+				}
+			}
+		}
+		
+		tocarSom(PARARMUSICA);
+		while(tecla != ESC && SairDoJogo == false)
+		{
+			gt2 = GetTickCount();
+			if (gt2 - gt1 > 1000/FPS)
+			{
+				gt1 = gt2;
+				
+				if(pg == 1) pg = 2; else pg = 1;
+				
+				setactivepage(pg);
+				setbkcolor(RGB(230, 230, 230));
+				cleardevice();
+				
+				//Desenhos
+				setbkcolor(RGB(255, 255, 255));
+				setcolor(RGB(0, 0, 0));
+				setlinestyle(0, 0, 1);
+				
+				strcpy(Texto, "Fim do jogo!");
+				outtextxy(475, 295, Texto);
+				
+				//Deixa a pagina visivel
+				setvisualpage(pg);
+				
+				//--------------------------------------------------------------------------------------------------------------------------
+				
+				//Acoes
+				if(tecla == TECLAENTER)
+				{
+					SairDoJogo = true;
 				}
 				
 				tecla = 0;
